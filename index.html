@@ -1,0 +1,712 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IntelliTraffic — Smarter Congestion Control</title>
+  <link rel="icon" type="image/png" href="images/logo1.png">
+  <meta name="theme-color" content="#0b1328">
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+  <link href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" rel="stylesheet">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-primary:#0a0e1a; --bg-secondary:#0f1525; --bg-tertiary:#141b2e;
+      --surface:#1a2235; --surface-elevated:#1f2842;
+      --text-primary:#f0f4f8; --text-secondary:#b4c1d6; --text-muted:#7d8fa8;
+      --accent-primary:#3b82f6; --accent-secondary:#06b6d4; --accent-success:#10b981; --accent-warning:#f59e0b; --accent-danger:#ef4444;
+      --border:rgba(148,163,184,0.1); --border-hover:rgba(148,163,184,0.2);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.3); --shadow-md:0 4px 6px -1px rgba(0,0,0,.4),0 2px 4px -1px rgba(0,0,0,.3); --shadow-lg:0 10px 15px -3px rgba(0,0,0,.5),0 4px 6px -2px rgba(0,0,0,.4);
+    }
+    *{ box-sizing:border-box }
+    html{ scroll-behavior:smooth }
+    body{ margin:0; padding:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--text-primary); background:linear-gradient(135deg,var(--bg-primary),var(--bg-secondary) 50%, var(--bg-primary)); line-height:1.6 }
+    a{ color:var(--text-primary); text-decoration:none }
+    .container{ width:min(1280px,100% - 3rem); margin:0 auto; padding:0 1.5rem }
+    header{ position:sticky; top:0; z-index:100; backdrop-filter:blur(12px) saturate(180%); background:rgba(10,14,26,.85); border-bottom:1px solid var(--border); box-shadow:var(--shadow-sm) }
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding:1.1rem 0 }
+    .brand{ display:flex; align-items:center; gap:1rem; font-size:1.15rem; font-weight:700; letter-spacing:-.01em }
+    .brand img{ height:52px; width:auto; border-radius:12px; box-shadow:0 0 20px rgba(59,130,246,.25) }
+    .badge{ font-size:.75rem; font-weight:500; padding:.25rem .65rem; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:6px; color:var(--text-muted) }
+    .navlinks{ display:flex; gap:2rem; font-size:.95rem; font-weight:500 }
+    .navlinks a{ color:var(--text-secondary); padding:.5rem 0; border-bottom:2px solid transparent; transition:all .2s ease }
+    .navlinks a:hover{ color:var(--text-primary); border-color:var(--accent-primary) }
+
+    .hero{ padding:3rem 0 1rem }
+    .hero > .card{ margin-top:.5rem }
+    .hero h1{ font-size:clamp(2rem,3.6vw,3.2rem); line-height:1.12; margin:.35rem 0 1.1rem; background:linear-gradient(135deg,var(--text-primary),var(--text-secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text }
+    .lede{ color:var(--text-secondary); font-size:1.1rem; line-height:1.8 }
+    .cta{ display:flex; gap:.8rem; margin-top:1.25rem }
+
+    .btn{ padding:1rem 1.2rem; border-radius:10px; font-weight:600; font-size:1rem; cursor:pointer; border:none; transition:all .2s ease; text-decoration:none; display:inline-block }
+    .btn:hover{ transform:translateY(-2px) }
+    .btn:active{ transform:translateY(0) }
+    .btn.alt{ background:var(--surface); color:var(--text-primary); border:1px solid var(--border) }
+    .btn.alt:hover{ background:var(--surface-elevated); border-color:var(--border-hover) }
+    .btn{ background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary)); color:#fff; box-shadow:0 4px 12px rgba(59,130,246,.3) }
+
+    .card{ background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.3rem; box-shadow:var(--shadow-md); transition:all .3s ease }
+    .card:hover{ box-shadow:var(--shadow-lg) }
+
+    .grid{ display:grid; gap:1.1rem }
+    .grid.two{ grid-template-columns:repeat(2,minmax(0,1fr)) }
+    .grid.three{ grid-template-columns:repeat(3,minmax(0,1fr)) }
+    @media (max-width:960px){ .hero{ padding:2rem 0 1.25rem } .grid.two, .grid.three{ grid-template-columns:1fr } }
+
+    section{ padding:1.2rem 0 0 }
+    h2{ font-size:1.6rem; margin:0 0 .9rem; display:flex; align-items:center; gap:.6rem }
+    h2::after{ content:""; flex:1; height:1px; background:var(--border) }
+    p{ color:var(--text-primary); opacity:.95 }
+    .muted{ color:var(--text-muted) }
+
+    .kpi{ display:flex; gap:1rem; flex-wrap:wrap }
+    .kpi .item{ background:var(--bg-secondary); padding:.9rem 1rem; border-radius:.8rem; border:1px solid var(--border) }
+
+    .mapwrap{ height:500px; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:1rem 0; box-shadow:var(--shadow-md) }
+    #map{ height:100%; width:100% }
+
+    .pill{ display:inline-block; padding:.375rem .875rem; border-radius:50px; font-size:.875rem; font-weight:500; border:1px solid var(--border); background:var(--bg-secondary); color:var(--text-secondary); margin:.25rem }
+    .foot{ color:var(--text-muted); font-size:.92rem; padding:2rem 0; text-align:center; border-top:1px solid var(--border); margin-top:2rem }
+    .chip{ display:inline-flex; align-items:center; gap:.5rem; padding:.5rem 1rem; border-radius:50px; background:linear-gradient(135deg, rgba(59,130,246,.15), rgba(6,182,212,.15)); border:1px solid rgba(59,130,246,.3); color:var(--accent-secondary); font-size:.875rem; font-weight:600 }
+    .label{ font-size:.82rem; color:var(--text-secondary); font-weight:600; text-transform:uppercase; letter-spacing:.05em }
+
+    input, select{ width:100%; padding:.875rem 1rem; background:var(--bg-secondary); border:1px solid var(--border); border-radius:8px; color:var(--text-primary); font-size:.95rem; transition:all .2s ease }
+    input:focus, select:focus{ outline:none; border-color:var(--accent-primary); box-shadow:0 0 0 3px rgba(59,130,246,.1) }
+    input::placeholder{ color:var(--text-muted) }
+
+    .chartwrap{ height:350px; position:relative; padding:1rem; background:var(--bg-secondary); border-radius:12px; margin:1rem 0 }
+    @media (max-width:600px){ .chartwrap{ height:260px } }
+    #forecastChart{ width:100% !important; height:100% !important; display:block }
+
+    .text-muted{ color:var(--text-muted) }
+    .text-center{ text-align:center }
+    .mb-1{ margin-bottom:.5rem } .mb-2{ margin-bottom:1rem } .mb-3{ margin-bottom:1.5rem }
+    .mt-2{ margin-top:1rem } .mt-3{ margin-top:1.5rem }
+
+    .toasts{ position:fixed; right:18px; bottom:18px; display:flex; flex-direction:column; gap:.6rem; z-index:9999 }
+    .toast{ background:var(--surface-elevated); color:var(--text-primary); border:1px solid var(--border); border-left:4px solid var(--accent-primary); padding:.8rem 1rem; border-radius:10px; box-shadow:var(--shadow-md); min-width:260px; max-width:360px; animation: toastIn .2s ease-out }
+    @keyframes toastIn{ from{ transform:translateY(8px); opacity:0 } to{ transform:translateY(0); opacity:1 } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <img src="images/logo1.png" alt="IntelliTraffic Logo">
+        <div>IntelliTraffic</div>
+        <span class="badge">Capstone Prototype</span>
+      </div>
+      <nav class="navlinks">
+        <a href="#map">Map</a>
+        <a href="#team">Team</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="hero">
+      <div>
+        <div class="chip">Predictive Analytics • Local Context • Web & Mobile</div>
+        <h1>Leveraging Past Traffic Data and Predictive Analytics for Smarter Congestion Control</h1>
+        <p class="lede">A prototype web dashboard demonstrating the IntelliTraffic concept: fusing historical and real-time traffic, weather, and incident data with ML models to forecast congestion and travel times for Metro Manila and beyond.</p>
+        <div class="kpi" style="margin:.9rem 0 0">
+          <div class="item"><div class="label">Target API latency</div><div style="font-weight:700">&lt; 500 ms</div></div>
+          <div class="item"><div class="label">Forecast horizon</div><div style="font-weight:700">15–120 min</div></div>
+          <div class="item"><div class="label">Platforms</div><div style="font-weight:700">Web • Android</div></div>
+        </div>
+        <div class="cta">
+          <a class="btn" href="#map">View Map Mock</a>
+          <a class="btn alt" href="#forecast">See Forecast Chart</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="grid two" style="gap:.6rem">
+          <div class="item" style="display:flex;gap:.6rem;align-items:center">
+            <div style="width:10px;height:10px;border-radius:999px;background:#36d399"></div>
+            <div>
+              <div style="font-weight:700">Weather-aware</div>
+              <div class="muted" style="font-size:.9rem">Forecasts incorporate rain and temperature signals</div>
+            </div>
+          </div>
+          <div class="item" style="display:flex;gap:.6rem;align-items:center">
+            <div style="width:10px;height:10px;border-radius:999px;background:#f59e0b"></div>
+            <div>
+              <div style="font-weight:700">Incident-aware</div>
+              <div class="muted" style="font-size:.9rem">User and official reports shift route predictions</div>
+            </div>
+          </div>
+          <div class="item" style="display:flex;gap:.6rem;align-items:center">
+            <div style="width:10px;height:10px;border-radius:999px;background:#4f7cff"></div>
+            <div>
+              <div style="font-weight:700">Local-context</div>
+              <div class="muted" style="font-size:.9rem">Patterns tuned for Metro Manila corridors</div>
+            </div>
+          </div>
+          <div class="item" style="display:flex;gap:.6rem;align-items:center">
+            <div style="width:10px;height:10px;border-radius:999px;background:#ef4444"></div>
+            <div>
+              <div style="font-weight:700">Hotspot alerts</div>
+              <div class="muted" style="font-size:.9rem">Proactive notifications before peak build-up</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+
+    
+
+    <section id="interactive" style="margin-top:1rem" class="grid two">
+      <div class="card">
+        <h2>Live Map Mock</h2>
+        <div class="mapwrap"><div id="map"></div></div>
+        <div class="grid two" style="margin-top:.6rem">
+          <div>
+            <label class="label">Scenario</label>
+            <select id="scenario">
+              <option value="now">Now</option>
+              <option value="plus30">+30 min forecast</option>
+              <option value="plus60">+60 min forecast</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">Layer</label>
+            <select id="layer">
+              <option value="congestion">Congestion</option>
+              <option value="incidents">Incidents</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid two" style="margin-top:.6rem">
+          <div>
+            <label class="label">Corridor</label>
+            <div style="display:flex; gap:.5rem; align-items:end">
+              <select id="corridorSel">
+                <option value="EDSA">EDSA</option>
+                <option value="C5">C5</option>
+                <option value="Commonwealth">Commonwealth</option>
+              </select>
+              <button class="btn alt" id="favToggleBtn" style="white-space:nowrap">Add to Favorites</button>
+            </div>
+            <div style="margin-top:.5rem">
+              <div class="label">Favorites</div>
+              <div id="favCorridors" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.35rem"></div>
+            </div>
+          </div>
+          <div class="card" style="padding:.7rem">
+            <div class="label">KPIs</div>
+            <div id="kpiWrap" style="display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.3rem">
+              <div><span class="label">Speed</span><div id="kpiSpeed" style="font-weight:700">–</div></div>
+              <div><span class="label">ETA</span><div id="kpiEta" style="font-weight:700">–</div></div>
+              <div><span class="label">Trend</span><div id="kpiTrend" style="font-weight:700">–</div></div>
+              <div><span class="label">Confidence</span><div id="kpiConf" style="font-weight:700">–</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="grid two" style="margin-top:.6rem;align-items:center">
+          <div>
+            <label class="label">Forecast horizon</label>
+            <input id="horizon" type="range" min="0" max="120" step="10" value="30">
+            <div class="muted" id="hLabel">+30 min</div>
+          </div>
+          <div>
+            <label class="label">Weather</label>
+            <select id="weather">
+              <option value="clear">Clear</option>
+              <option value="rain">Rain</option>
+            </select>
+          </div>
+        </div>
+        <div class="muted" style="margin-top:.5rem">Colors indicate estimated corridor speed: green ≥ 30 km/h, orange 15–30, red ≤ 15.</div>
+      </div>
+      <div class="card">
+        <h2>Route Prediction Mock</h2>
+        <div class="grid two">
+          <div>
+            <label class="label">Origin</label>
+            <input id="origin" placeholder="Quezon Ave Station" list="placesList">
+          </div>
+          <div>
+            <label class="label">Destination</label>
+            <input id="destination" placeholder="MOA" list="placesList">
+          </div>
+        </div>
+        <datalist id="placesList">
+          <option value="Quezon Ave Station"></option>
+          <option value="MOA"></option>
+          <option value="BGC High St"></option>
+          <option value="Katipunan"></option>
+          <option value="Caloocan Monumento"></option>
+          <option value="Taft Ave"></option>
+        </datalist>
+        <div class="grid two" style="margin-top:.6rem">
+          <div>
+            <label class="label">Departure</label>
+            <select id="departure">
+              <option value="now">Now</option>
+              <option value="15">In 15 min</option>
+              <option value="30">In 30 min</option>
+              <option value="60">In 60 min</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;justify-content:flex-end">
+            <button class="btn" id="predictBtn">Predict Travel Time</button>
+          </div>
+        </div>
+        <div class="grid two" style="margin-top:.6rem">
+          <div>
+            <button class="btn alt" id="saveRouteBtn">Save Route</button>
+          </div>
+          <div></div>
+        </div>
+        <div id="predictionResult" style="margin-top:.8rem;font-weight:700"></div>
+        <div class="muted" style="margin-top:.2rem">This is a front-end mock that simulates model outputs for demo purposes.</div>
+        <div style="margin-top:.8rem">
+          <div class="label">Saved routes</div>
+          <div id="savedRoutes" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.35rem"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="forecast" class="grid two" style="margin-top:1rem">
+      <div class="card">
+        <h2>Forecast Chart</h2>
+        <div class="chartwrap"><canvas id="forecastChart"></canvas></div>
+        <div class="muted" style="margin-top:.5rem">Predicted corridor speed for the next 2 hours (mock).</div>
+      </div>
+      <div class="card">
+        <h2>Predicted Hotspots</h2>
+        <ul id="hotspots">
+          <li>EDSA Guadalupe northbound at 18:00</li>
+          <li>Commonwealth Ave eastbound at 17:30</li>
+          <li>C5 southbound near Libis at 18:15</li>
+        </ul>
+        <div class="muted">Subscribe to alerts to get notified ahead of peak build-up.</div>
+        <div class="grid two" style="margin-top:.6rem">
+          <div>
+            <label class="label">Route</label>
+            <select id="alertRoute">
+              <option value="EDSA">EDSA</option>
+              <option value="C5">C5</option>
+              <option value="Commonwealth">Commonwealth</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">Alert when speed below (km/h)</label>
+            <input id="alertThreshold" type="number" min="5" max="40" value="20">
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:.6rem">
+          <button class="btn" id="subscribeAlertBtn">Subscribe</button>
+        </div>
+        <div style="margin-top:.8rem">
+          <div class="label">Notifications</div>
+          <div id="alertsFeed" style="display:flex;flex-direction:column;gap:.4rem;margin-top:.35rem"></div>
+        </div>
+        <div style="margin-top:1rem">
+          <h2>Incident Reporting</h2>
+          <div class="grid two">
+            <div>
+              <label class="label">Type</label>
+              <select id="incType">
+                <option value="Minor">Minor</option>
+                <option value="Crash">Crash</option>
+                <option value="Roadwork">Roadwork</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">Note</label>
+              <input id="incNote" placeholder="Optional note">
+            </div>
+          </div>
+          <div class="grid two" style="margin-top:.6rem;align-items:end">
+            <div>
+              <div class="label">Location</div>
+              <div id="incLocLabel" class="muted">No point selected</div>
+            </div>
+            <div style="display:flex;gap:.5rem;justify-content:flex-end">
+              <button class="btn alt" id="pickLocBtn">Pick on Map</button>
+              <button class="btn" id="submitIncBtn">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+
+    
+
+    <section id="team" class="grid two" style="margin-top:1rem">
+      <div class="card">
+        <h2>Team</h2>
+        <div class="grid two">
+          <div>
+            <div style="font-weight:700">Alcantara, Kristian Diether</div>
+            <div class="muted">Data Scientist</div>
+          </div>
+          <div>
+            <div style="font-weight:700">Hernandez, Gian Accel</div>
+            <div class="muted">Mobile Engineer / QA</div>
+          </div>
+          <div>
+            <div style="font-weight:700">Tan, Benedict James</div>
+            <div class="muted">Backend Engineer / ML Ops</div>
+          </div>
+          <div>
+            <div style="font-weight:700">Viray, Ranuel Glenn</div>
+            <div class="muted">Project Lead</div>
+          </div>
+          <div>
+            <div style="font-weight:700">Balmes, Irene</div>
+            <div class="muted">Capstone Adviser</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="foot">Prototype for demonstration only. No live data. All predictions are simulated.</div>
+  </main>
+
+  <div id="toastWrap" class="toasts"></div>
+
+  <script>
+    const map = L.map('map', { zoomControl: true }).setView([14.5896, 121.0606], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+
+    const corridors = [
+      { name:'EDSA', coords:[[14.5537,121.0453],[14.5589,121.0488],[14.5639,121.0549],[14.5669,121.0616],[14.5710,121.0669]] },
+      { name:'C5', coords:[[14.5690,121.0665],[14.5739,121.0786],[14.5893,121.0815],[14.6073,121.0826]] },
+      { name:'Commonwealth', coords:[[14.6753,121.0435],[14.6616,121.0564],[14.6504,121.0713]] }
+    ];
+    const places = {
+      'Quezon Ave Station': [14.6372,121.0384],
+      'MOA': [14.5353,120.9822],
+      'BGC High St': [14.5491,121.0556],
+      'Katipunan': [14.6399,121.0747],
+      'Caloocan Monumento': [14.6549,120.9830],
+      'Taft Ave': [14.5695,120.9880]
+    };
+    let routeControl = null;
+    let fallbackRoute = null;
+    const customIncidents = [];
+    function seedDemoDataEarly(){
+      if(localStorage.getItem('it_demo_seeded')==='1') return;
+      const routes = [
+        {o:'Quezon Ave Station', d:'MOA', dep:'30'},
+        {o:'Katipunan', d:'BGC High St', dep:'15'},
+        {o:'Caloocan Monumento', d:'Taft Ave', dep:'now'}
+      ];
+      localStorage.setItem('it_saved_routes', JSON.stringify(routes));
+      customIncidents.push([14.5605,121.0569,'Crash: 2 lanes affected']);
+      customIncidents.push([14.5842,121.0791,'Roadwork: sewer maintenance']);
+      customIncidents.push([14.6512,121.0601,'Minor: stalled vehicle']);
+      const o = document.getElementById('origin'); if(o) o.value = routes[0].o;
+      const d = document.getElementById('destination'); if(d) d.value = routes[0].d;
+      const dep = document.getElementById('departure'); if(dep) dep.value = routes[0].dep;
+    }
+
+    function speedToColor(kph){
+      if(kph >= 30) return '#36d399';
+      if(kph >= 15) return '#f59e0b';
+      return '#ef4444';
+    }
+
+    function computeSpeed(corridorName, horizonMin, weather){
+      const base = corridorName==='EDSA'? 28 : corridorName==='C5'? 26 : 24;
+      const horizonPenalty = Math.min(12, Math.floor(horizonMin/10)*1.5);
+      const weatherPenalty = weather==='rain'? 6 : 0;
+      const jitter = (Math.random()*1.6)-0.8;
+      return Math.max(5, base - horizonPenalty - weatherPenalty + jitter);
+    }
+
+    let overlays = [];
+    function renderCorridors(){
+      overlays.forEach(l=> map.removeLayer(l));
+      overlays = [];
+      const scenario = document.getElementById('scenario').value;
+      const layer = document.getElementById('layer').value;
+      const horizon = parseInt(document.getElementById('horizon').value,10);
+      const weather = document.getElementById('weather').value;
+      document.getElementById('hLabel').textContent = horizon===0? 'Now' : ('+'+horizon+' min');
+
+      if(layer==='congestion'){
+        corridors.forEach((c)=>{
+          const scnH = scenario==='now'? 0 : scenario==='plus30'? 30 : 60;
+          const effH = Math.max(horizon, scnH);
+          const kph = computeSpeed(c.name, effH, weather);
+          const color = speedToColor(kph);
+          const poly = L.polyline(c.coords, { color, weight: 6, opacity: .9 }).addTo(map);
+          const band = kph>=30?'≥30 km/h':(kph>=15?'15–30 km/h':'≤15 km/h');
+          poly.bindTooltip(c.name + ' • ~' + Math.round(kph) + ' km/h ('+band+')');
+          overlays.push(poly);
+        });
+      } else {
+        const points = [[14.5675,121.0632,'Minor'],[14.5562,121.0521,'Crash'],[14.5881,121.0812,'Roadwork'], ...customIncidents];
+        points.forEach(p=>{
+          const marker = L.circleMarker([p[0],p[1]], { radius: 8, color:'#ef4444', fillColor:'#ef4444', fillOpacity:.8 }).addTo(map);
+          marker.bindPopup('Incident: ' + p[2]);
+          overlays.push(marker);
+        });
+      }
+      checkAlerts();
+    }
+    document.getElementById('scenario').addEventListener('change', renderCorridors);
+    document.getElementById('layer').addEventListener('change', renderCorridors);
+    document.getElementById('horizon').addEventListener('input', renderCorridors);
+    document.getElementById('weather').addEventListener('change', ()=>{ renderCorridors(); updateChart(); updateKPIs(); });
+    document.getElementById('corridorSel').addEventListener('change', updateKPIs);
+    seedDemoDataEarly();
+    renderCorridors();
+    updateKPIs();
+
+    const ctx = document.getElementById('forecastChart');
+    const labels = Array.from({length:13}, (_,i)=> i===0?'Now':(i*10)+'m');
+    function generateSeries(){
+      const weather = document.getElementById('weather').value;
+      const horizon = parseInt(document.getElementById('horizon').value,10);
+      const base = 32 - (weather==='rain'?4:0) - Math.floor(horizon/10)*0.6;
+      return labels.map((_,i)=> base - Math.max(0,i-2)*1.1 + (Math.random()*1.2-0.6));
+    }
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: { labels, datasets: [
+        { label: 'Speed (km/h)', data: generateSeries(), borderColor:'#4f7cff', backgroundColor:'rgba(79,124,255,0.25)', tension:.35, fill:true, pointRadius:0 }
+      ]},
+      options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ min:0, max:50, grid:{ color:'rgba(255,255,255,0.06)'} }, x:{ grid:{ color:'rgba(255,255,255,0.06)'} } }, plugins:{ legend:{ labels:{ color:'#cfd6ea' } } } }
+    });
+    function updateChart(){ chart.data.datasets[0].data = generateSeries(); chart.update(); }
+    window.addEventListener('load', updateChart);
+    window.addEventListener('resize', ()=> setTimeout(updateChart, 100));
+
+    function updateKPIs(){
+      const corr = document.getElementById('corridorSel').value;
+      const horizon = parseInt(document.getElementById('horizon').value,10);
+      const weather = document.getElementById('weather').value;
+      const kph = computeSpeed(corr, horizon, weather);
+      document.getElementById('kpiSpeed').textContent = Math.round(kph) + ' km/h';
+      const baseETA = 35;
+      const etaAdj = Math.max(0, Math.round((30-kph)/2));
+      document.getElementById('kpiEta').textContent = (baseETA + etaAdj) + ' min';
+      const trend = (Math.random()*4-2).toFixed(1);
+      document.getElementById('kpiTrend').textContent = (trend>0?'+':'') + trend + ' km/h';
+      const conf = Math.max(60, 95 - Math.floor(horizon/10)*4 - (weather==='rain'?8:0));
+      document.getElementById('kpiConf').textContent = conf + '%';
+    }
+
+    function clearRoute(){
+      if(routeControl){ map.removeControl(routeControl); routeControl = null; }
+      if(fallbackRoute){ map.removeLayer(fallbackRoute); fallbackRoute = null; }
+    }
+    function findPlace(name){
+      if(!name) return null;
+      const lc = name.toLowerCase();
+      for(const k of Object.keys(places)){
+        if(k.toLowerCase()===lc || k.toLowerCase().includes(lc) || lc.includes(k.toLowerCase())) return places[k];
+      }
+      return null;
+    }
+    function plotRoute(oName, dName, eta){
+      clearRoute();
+      const o = findPlace(oName);
+      const d = findPlace(dName);
+      if(o && d && L.Routing){
+        routeControl = L.Routing.control({
+          waypoints: [ L.latLng(o[0],o[1]), L.latLng(d[0],d[1]) ],
+          lineOptions: { styles:[{color:'#2fd3e8', weight:6, opacity:.95}] },
+          addWaypoints: false,
+          routeWhileDragging: false,
+          router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }),
+          fitSelectedRoutes: false,
+          collapsible: true,
+          show: false,
+          createMarker: ()=> null
+        }).addTo(map);
+        routeControl.on('routesfound', function(e){
+          const r = e.routes[0];
+          const distKm = (r.summary.totalDistance/1000).toFixed(1);
+          const baseDurMin = Math.round(r.summary.totalTime/60);
+          const adj = Math.max(0, Math.round(eta - baseDurMin));
+          document.getElementById('predictionResult').textContent = 'Estimated travel time: ' + eta + ' minutes • Route distance: ' + distKm + ' km';
+          map.fitBounds(L.latLngBounds(r.coordinates));
+        });
+        routeControl.on('routingerror', ()=>{
+          pushAlert('Routing service unavailable. Showing straight-line fallback.');
+          const latlngs = [L.latLng(o[0],o[1]), L.latLng(d[0],d[1])];
+          fallbackRoute = L.polyline(latlngs, { color:'#2fd3e8', weight:6, opacity:.8, dashArray:'6 6' }).addTo(map);
+          map.fitBounds(fallbackRoute.getBounds(), {padding:[30,30]});
+        });
+      } else if(o && d){
+        const latlngs = [L.latLng(o[0],o[1]), L.latLng(d[0],d[1])];
+        fallbackRoute = L.polyline(latlngs, { color:'#2fd3e8', weight:6, opacity:.8, dashArray:'6 6' }).addTo(map);
+        map.fitBounds(fallbackRoute.getBounds(), {padding:[30,30]});
+      }
+    }
+
+    document.getElementById('predictBtn').addEventListener('click', ()=>{
+      const dep = document.getElementById('departure').value;
+      const base = 55;
+      const penalty = dep==='now'?10:dep==='15'?15:dep==='30'?20:28;
+      const weatherAdj = document.getElementById('weather').value==='rain'?8:5;
+      const incident = dep==='60'?8:4;
+      const horizon = parseInt(document.getElementById('horizon').value,10);
+      const horizonAdj = Math.floor(horizon/10);
+      const eta = Math.round(base + penalty + weatherAdj + incident + horizonAdj - Math.random()*6);
+      document.getElementById('predictionResult').textContent = 'Estimated travel time: ' + eta + ' minutes • Confidence: ±6m';
+      const oName = document.getElementById('origin').value.trim();
+      const dName = document.getElementById('destination').value.trim();
+      plotRoute(oName, dName, eta);
+    });
+
+    document.getElementById('saveRouteBtn').addEventListener('click', ()=>{
+      const o = document.getElementById('origin').value.trim();
+      const d = document.getElementById('destination').value.trim();
+      const dep = document.getElementById('departure').value;
+      if(!o || !d) return;
+      const key = 'it_saved_routes';
+      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      list.unshift({o,d,dep,ts:Date.now()});
+      localStorage.setItem(key, JSON.stringify(list.slice(0,6)));
+      renderSavedRoutes();
+    });
+
+    function renderSavedRoutes(){
+      const wrap = document.getElementById('savedRoutes');
+      wrap.innerHTML='';
+      const list = JSON.parse(localStorage.getItem('it_saved_routes') || '[]');
+      list.forEach((r,idx)=>{
+        const b = document.createElement('button');
+        b.className='btn alt';
+        b.style.padding='.45rem .7rem';
+        b.textContent = r.o + ' → ' + r.d + (r.dep!=='now'? (' • +' + r.dep + 'm') : '');
+        b.addEventListener('click', ()=>{
+          document.getElementById('origin').value = r.o;
+          document.getElementById('destination').value = r.d;
+          document.getElementById('departure').value = r.dep;
+        });
+        wrap.appendChild(b);
+      });
+    }
+    renderSavedRoutes();
+
+    const subs = [];
+    document.getElementById('subscribeAlertBtn').addEventListener('click', ()=>{
+      const route = document.getElementById('alertRoute').value;
+      const thr = parseInt(document.getElementById('alertThreshold').value,10);
+      subs.push({route: route, thr: thr});
+      pushAlert('Subscribed to ' + route + ' alerts below ' + thr + ' km/h');
+      checkAlerts();
+    });
+
+    function pushAlert(text){
+      const feed = document.getElementById('alertsFeed');
+      const row = document.createElement('div');
+      row.className='card';
+      row.style.padding='.6rem .8rem';
+      row.textContent = new Date().toLocaleTimeString() + ' — ' + text;
+      feed.prepend(row);
+
+      const wrap = document.getElementById('toastWrap');
+      if(wrap){
+        const t = document.createElement('div');
+        t.className='toast';
+        t.textContent = text;
+        wrap.appendChild(t);
+        setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateY(6px)'; t.style.transition='all .25s ease'; }, 4200);
+        setTimeout(()=>{ wrap.removeChild(t); }, 4500);
+      }
+    }
+
+    const favKey = 'it_fav_corridors';
+    function renderFavs(){
+      const wrap = document.getElementById('favCorridors');
+      wrap.innerHTML='';
+      const favs = JSON.parse(localStorage.getItem(favKey)||'[]');
+      favs.forEach(name=>{
+        const b = document.createElement('button');
+        b.className = 'btn alt';
+        b.style.padding = '.45rem .7rem';
+        b.textContent = name;
+        b.addEventListener('click', ()=>{ document.getElementById('corridorSel').value = name; updateKPIs(); });
+        wrap.appendChild(b);
+      });
+      const sel = document.getElementById('corridorSel').value;
+      const toggle = document.getElementById('favToggleBtn');
+      toggle.textContent = favs.includes(sel)? 'Remove Favorite' : 'Add to Favorites';
+    }
+    document.getElementById('favToggleBtn').addEventListener('click', ()=>{
+      const sel = document.getElementById('corridorSel').value;
+      let favs = JSON.parse(localStorage.getItem(favKey)||'[]');
+      if(favs.includes(sel)) favs = favs.filter(x=>x!==sel); else favs.push(sel);
+      localStorage.setItem(favKey, JSON.stringify(favs));
+      renderFavs();
+    });
+    document.getElementById('corridorSel').addEventListener('change', renderFavs);
+    renderFavs();
+
+    function seedDemoAlerts(){
+      if(localStorage.getItem('it_demo_seeded')==='1') return;
+      pushAlert('Subscribed to EDSA alerts below 20 km/h');
+      subs.push({route:'EDSA', thr:20});
+      pushAlert('EDSA predicted ~18 km/h (< 20)');
+      pushAlert('Commonwealth predicted ~22 km/h');
+      localStorage.setItem('it_demo_seeded','1');
+      renderSavedRoutes();
+    }
+    seedDemoAlerts();
+
+    function checkAlerts(){
+      const layer = document.getElementById('layer').value;
+      if(layer!=='congestion' || subs.length===0) return;
+      const horizon = parseInt(document.getElementById('horizon').value,10);
+      const weather = document.getElementById('weather').value;
+      corridors.forEach(c=>{
+        const kph = computeSpeed(c.name, horizon, weather);
+        subs.forEach(s=>{
+          if(s.route===c.name && kph < s.thr){
+            pushAlert(c.name + ' predicted ~' + Math.round(kph) + ' km/h (< ' + s.thr + ')');
+          }
+        });
+      });
+    }
+
+    setInterval(()=>{ renderCorridors(); updateChart(); updateKPIs(); }, 20000);
+
+    let picking = false;
+    let pickMarker = null;
+    document.getElementById('pickLocBtn').addEventListener('click', ()=>{
+      picking = true;
+      pushAlert('Click on map to set incident location');
+    });
+    map.on('click', (e)=>{
+      if(!picking) return;
+      if(pickMarker){ map.removeLayer(pickMarker); }
+      pickMarker = L.marker(e.latlng).addTo(map);
+      document.getElementById('incLocLabel').textContent = e.latlng.lat.toFixed(5)+', '+e.latlng.lng.toFixed(5);
+      picking = false;
+    });
+    document.getElementById('submitIncBtn').addEventListener('click', ()=>{
+      if(!pickMarker){ pushAlert('Please pick a location first'); return; }
+      const t = document.getElementById('incType').value;
+      const n = document.getElementById('incNote').value.trim();
+      const latlng = pickMarker.getLatLng();
+      customIncidents.push([latlng.lat, latlng.lng, t + (n? (': '+n):'')]);
+      map.removeLayer(pickMarker); pickMarker=null;
+      document.getElementById('incLocLabel').textContent = 'No point selected';
+      pushAlert('Incident submitted for review');
+      const prev = document.getElementById('layer').value;
+      document.getElementById('layer').value = 'incidents';
+      renderCorridors();
+      document.getElementById('layer').value = prev;
+    });
+  </script>
+</body>
+</html>
+
