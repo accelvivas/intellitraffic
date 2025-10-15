@@ -1308,37 +1308,41 @@
             });
 
             // Show selected page
-            const pageElement = document.getElementById(page + '-page');
-            if (pageElement) {
-                pageElement.classList.add('active');
-                currentPage = page;
-                try { localStorage.setItem('currentPage', page); } catch {}
-                
-                // Update active nav buttons
-                updateNavButtons(page);
-                
-                // Close mobile menu
-                document.getElementById('mobileMenu').classList.remove('active');
-                
-                // Scroll to top
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            const targetSection = document.getElementById(`${page}-page`);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            currentPage = page;
+            try { localStorage.setItem('currentPage', page); } catch {}
+            
+            // Update active nav buttons
+            updateNavButtons(page);
+            
+            // Close mobile menu
+            document.getElementById('mobileMenu').classList.remove('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                // Initialize page-specific features
-                if (page === 'traffic-map') {
-                    initLeafletMap();
-                } else if (page === 'analytics') {
-                    initCharts();
-                } else if (page === 'route-planner') {
-                    initRoutePlannerMap();
-                }
-
-                // Re-initialize icons
-                lucide.createIcons();
-
-                // Re-trigger fade-up animations for the new page
-                if (window.__revealPage) {
-                    window.__revealPage('#' + page + '-page');
-                }
+            // Page-specific initializations
+            if (page === 'traffic-map') {
+                initLeafletMap();
+            } else if (page === 'analytics') {
+                initCharts();
+            } else if (page === 'route-planner') {
+                initRoutePlannerMap();
+                // Ensure blank fields for planning a new route
+                const o = document.getElementById('routeOrigin');
+                const d = document.getElementById('routeDestination');
+                if (o) o.value = '';
+                if (d) d.value = '';
+            } else if (page === 'incident-reporter') {
+                if (typeof renderRecentReports === 'function') renderRecentReports();
+            }
+            
+            // Re-trigger fade-up animations for the new page
+            if (window.__revealPage) {
+                window.__revealPage('#' + page + '-page');
             }
         }
 
@@ -2185,6 +2189,13 @@
             if (window.__setupRevealAnimations) window.__setupRevealAnimations();
             // Ensure top after restoration
             window.scrollTo({ top: 0, behavior: 'auto' });
+            // If starting on route planner, clear any prefilled values
+            if (startPage === 'route-planner') {
+                const o = document.getElementById('routeOrigin');
+                const d = document.getElementById('routeDestination');
+                if (o) o.value = '';
+                if (d) d.value = '';
+            }
         });
     </script>
 </body>
