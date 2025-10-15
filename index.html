@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IntelliTraffic - Smart Traffic Management System</title>
+    <link rel="icon" href="images/logo1.png" type="image/png">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,6 +14,10 @@
     
     <!-- Chart.js for analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- iziToast for notifications -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
     
     <style>
         * {
@@ -271,6 +276,11 @@
         .traffic-point:hover {
             transform: scale(1.2);
         }
+
+        /* Ensure navbar stays above Leaflet controls */
+        .leaflet-top, .leaflet-bottom { z-index: 40 !important; }
+        .leaflet-control-container { z-index: 40 !important; }
+        .leaflet-container { z-index: 10 !important; }
         
         @media (max-width: 768px) {
             .desktop-nav {
@@ -763,9 +773,13 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Starting Point</label>
                                 <div class="relative">
-                                    <input type="text" id="routeOrigin" value="Quezon City Hall" class="w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter origin">
+                                    <input type="text" id="routeOrigin" value="Quezon City Hall" class="w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter origin or use GPS">
                                     <i data-lucide="map-pin" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                                 </div>
+                                <button id="routeUseMyLocationBtn" type="button" class="mt-2 flex items-center gap-2 px-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors">
+                                    <i data-lucide="navigation" class="w-4 h-4"></i>
+                                    Use My Current Location
+                                </button>
                             </div>
 
                             <div>
@@ -785,6 +799,18 @@
                                     <option value="2hr">In 2 hours</option>
                                     <option value="custom">Custom Time</option>
                                 </select>
+                                <input type="datetime-local" id="routeCustomTime" class="mt-2 w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 hidden" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Travel Mode</label>
+                                <select id="routeMode" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="driving">Driving (Road)</option>
+                                    <option value="ferry">Ferry (Experimental)</option>
+                                    <option value="flight">Flight (Experimental)</option>
+                                    <option value="transit">Public Transit (Requires API)</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Transit needs an API key (e.g., Google Directions). Ferry/Flight are estimated.</p>
                             </div>
 
                             <button onclick="showRouteResults()" class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors">
@@ -809,13 +835,16 @@
                     </div>
 
                     <!-- Route Results -->
-                    <div id="routeResults" class="lg:col-span-2 space-y-4">
-                        <div class="p-12 bg-gray-800 rounded-lg border border-gray-700 text-center">
-                            <i data-lucide="navigation" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
-                            <h3 class="text-xl font-semibold text-gray-400 mb-2">Enter your route details</h3>
-                            <p class="text-gray-500">
-                                Fill in the origin and destination to get AI-powered route recommendations
-                            </p>
+                    <div class="lg:col-span-2 space-y-4">
+                        <div id="routeMap" class="h-64 bg-gray-800 rounded-lg border border-gray-700"></div>
+                        <div id="routeResults" class="space-y-4">
+                            <div class="p-12 bg-gray-800 rounded-lg border border-gray-700 text-center">
+                                <i data-lucide="navigation" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
+                                <h3 class="text-xl font-semibold text-gray-400 mb-2">Enter your route details</h3>
+                                <p class="text-gray-500">
+                                    Fill in the origin and destination to get AI-powered route recommendations
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1244,7 +1273,7 @@
     </footer>
 
     <!-- Toast notifications root -->
-    <div id="toastRoot" class="fixed top-4 right-4 z-[100] space-y-2"></div>
+    <div id="toastRoot" class="fixed bottom-4 right-4 z-[100] space-y-2 pointer-events-none"></div>
 
     <script>
         // Initialize Lucide icons
@@ -1258,38 +1287,17 @@
             history.scrollRestoration = 'manual';
         }
 
-        // Toast helper
+        // Toast helper (iziToast)
         function showToast(message, type = 'success') {
-            const root = document.getElementById('toastRoot');
-            if (!root) return;
-            const wrap = document.createElement('div');
-            wrap.className = 'min-w-[280px] max-w-[380px] rounded-lg shadow-lg border px-4 py-3 flex items-start gap-3 bg-white text-slate-900';
+            if (typeof iziToast === 'undefined') return;
+            const common = { message, position: 'bottomRight', timeout: 3000, close: true, progressBar: true }; 
             if (type === 'success') {
-                wrap.className += ' border-green-200';
+                iziToast.success({ title: 'Success', ...common });
             } else if (type === 'error') {
-                wrap.className += ' border-red-200';
+                iziToast.error({ title: 'Error', ...common });
             } else {
-                wrap.className += ' border-gray-200';
+                iziToast.info({ title: 'Notice', ...common });
             }
-            const icon = document.createElement('i');
-            icon.setAttribute('data-lucide', type === 'success' ? 'check-circle-2' : type === 'error' ? 'alert-triangle' : 'info');
-            icon.className = type === 'success' ? 'w-5 h-5 text-green-600 mt-0.5' : type === 'error' ? 'w-5 h-5 text-red-600 mt-0.5' : 'w-5 h-5 text-slate-600 mt-0.5';
-            const text = document.createElement('div');
-            text.className = 'text-sm';
-            text.textContent = message;
-            const close = document.createElement('button');
-            close.className = 'ml-auto text-slate-500 hover:text-slate-800';
-            close.innerHTML = '&times;';
-            close.onclick = () => root.removeChild(wrap);
-            wrap.appendChild(icon);
-            wrap.appendChild(text);
-            wrap.appendChild(close);
-            root.appendChild(wrap);
-            // render icon and auto-dismiss
-            lucide.createIcons({ attrs: { class: icon.className } });
-            setTimeout(() => {
-                if (wrap.parentNode === root) root.removeChild(wrap);
-            }, 3000);
         }
 
         // Navigation function
@@ -1320,6 +1328,8 @@
                     initLeafletMap();
                 } else if (page === 'analytics') {
                     initCharts();
+                } else if (page === 'route-planner') {
+                    initRoutePlannerMap();
                 }
 
                 // Re-initialize icons
@@ -1411,11 +1421,12 @@
                 return;
             }
 
-            __leaflet.map = L.map('leafletMap', { zoomControl: true }).setView([14.5995, 120.9842], 12);
+            __leaflet.map = L.map('leafletMap', { zoomControl: false, scrollWheelZoom: false, keyboard: false, tap: false }).setView([14.5995, 120.9842], 12);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(__leaflet.map);
+            L.control.zoom({ position: 'bottomright' }).addTo(__leaflet.map);
 
             __leaflet.markersLayer = L.layerGroup().addTo(__leaflet.map);
             renderLeafletMarkers('current');
@@ -1476,119 +1487,289 @@
             }
         }
 
-        // Route Planner functionality
-        function showRouteResults() {
-            const origin = document.getElementById('routeOrigin').value;
-            const destination = document.getElementById('routeDestination').value;
-            const departureTime = document.getElementById('routeDepartureTime').value;
+        // Route Planner: map, geocoding, routing (Nominatim + OSRM)
+        let __route = { map: null, layer: null, markers: [], routeGraphic: null };
+        function initRoutePlannerMap() {
+            const el = document.getElementById('routeMap');
+            if (!el) return;
+            if (!__route.map) {
+                __route.map = L.map('routeMap', { zoomControl: false, scrollWheelZoom: false, keyboard: false, tap: false }).setView([14.5995, 120.9842], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(__route.map);
+                __route.layer = L.geoJSON(null, { style: { color: '#3b82f6', weight: 5, opacity: 0.9 } }).addTo(__route.map);
+                L.control.zoom({ position: 'bottomright' }).addTo(__route.map);
+            }
+            setTimeout(() => __route.map.invalidateSize(), 100);
+        }
 
-            const routes = [
-                {
-                    name: "Fastest Route",
-                    distance: "18.5 km",
-                    duration: "35 min",
-                    predicted: "42 min",
-                    savings: "15 min vs usual",
-                    congestion: "medium",
-                    roads: ["EDSA", "C5", "Ortigas Ave"]
-                },
-                {
-                    name: "Least Congested",
-                    distance: "21.2 km",
-                    duration: "38 min",
-                    predicted: "38 min",
-                    savings: "20 min vs usual",
-                    congestion: "low",
-                    roads: ["Commonwealth", "España", "Quezon Ave"]
-                },
-                {
-                    name: "Shortest Distance",
-                    distance: "16.8 km",
-                    duration: "45 min",
-                    predicted: "52 min",
-                    savings: "5 min vs usual",
-                    congestion: "high",
-                    roads: ["EDSA", "Shaw Blvd", "Pioneer"]
+        function normalizePlaceQuery(q) {
+            const src = q.trim();
+            const variants = new Set();
+            if (src) variants.add(src);
+            // Common acronyms and shorthands
+            let v = src
+                .replace(/\bNU\b/gi, 'National University')
+                .replace(/\bQC\b/gi, 'Quezon City')
+                .replace(/\bCBD\b/gi, 'Central Business District');
+            if (v !== src) variants.add(v);
+            // Add city/country bias if missing
+            const ensurePH = (s) => /\bphilippines\b/i.test(s) ? s : `${s}, Philippines`;
+            Array.from(variants).forEach(item => variants.add(ensurePH(item)));
+            // Specific helpful hints
+            if (/\blipa\b/i.test(src)) {
+                variants.add('National University Lipa, Philippines');
+                variants.add('National University Lipa Campus, Philippines');
+            }
+            return Array.from(variants);
+        }
+
+        function haversineDistanceKm(a, b) {
+            const R = 6371; // km
+            const toRad = (deg) => deg * Math.PI / 180;
+            const dLat = toRad(b.lat - a.lat);
+            const dLon = toRad(b.lon - a.lon);
+            const lat1 = toRad(a.lat);
+            const lat2 = toRad(b.lat);
+            const h = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+            return 2 * R * Math.asin(Math.sqrt(h));
+        }
+
+        async function geocodePlace(q) {
+            const candidates = normalizePlaceQuery(q);
+            let lastErr = null;
+            for (const cand of candidates) {
+                try {
+                    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=ph&accept-language=en&q=${encodeURIComponent(cand)}`;
+                    const resp = await fetch(url);
+                    if (!resp.ok) { lastErr = new Error('Geocoding failed'); continue; }
+                    const data = await resp.json();
+                    if (data && data.length) {
+                        const { lat, lon, display_name } = data[0];
+                        return { lat: parseFloat(lat), lon: parseFloat(lon), name: display_name };
+                    }
+                } catch (e) {
+                    lastErr = e;
                 }
-            ];
+            }
+            throw lastErr || new Error('Location not found');
+        }
 
-            const container = document.getElementById('routeResults');
-            container.innerHTML = '';
+        async function routeOSRM(start, end) {
+            // start/end: {lat, lon}
+            const url = `https://router.project-osrm.org/route/v1/driving/${start.lon},${start.lat};${end.lon},${end.lat}?overview=full&geometries=geojson&steps=true`;
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error('Routing failed');
+            const data = await resp.json();
+            if (!data.routes || !data.routes.length) throw new Error('No route found');
+            return data.routes[0];
+        }
 
-            // Add header
-            const header = document.createElement('div');
-            header.className = 'flex items-center justify-between mb-4';
-            header.innerHTML = `
-                <h3 class="text-xl font-semibold text-white">Recommended Routes</h3>
-                <span class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium">
-                    ${departureTime === 'now' ? 'Now' : departureTime}
-                </span>
-            `;
-            container.appendChild(header);
+        function routeHasFerry(route) {
+            try {
+                if (!route || !route.legs) return false;
+                return route.legs.some((leg) => Array.isArray(leg.steps) && leg.steps.some((s) => {
+                    const name = (s.name || '').toLowerCase();
+                    const mode = (s.mode || '').toLowerCase();
+                    return mode === 'ferry' || name.includes('ferry');
+                }));
+            } catch { return false; }
+        }
 
-            // Add routes
-            routes.forEach((route, index) => {
-                const routeCard = document.createElement('div');
-                routeCard.className = 'p-6 bg-gray-800 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors';
-                
-                const congestionClass = route.congestion === 'high' ? 'bg-red-100 text-red-700 border-red-200' : 
-                                       route.congestion === 'medium' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' : 
-                                       'bg-green-100 text-green-700 border-green-200';
-                
-                routeCard.innerHTML = `
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-                                ${index + 1}
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-semibold text-white">${route.name}</h4>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <span class="px-2 py-1 rounded text-xs border ${congestionClass} font-medium">
-                                        ${route.congestion.toUpperCase()}
-                                    </span>
-                                    ${index === 0 ? '<span class="px-2 py-1 bg-green-600 text-white text-xs rounded font-medium">Recommended</span>' : ''}
-                                </div>
-                            </div>
-                        </div>
-                        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
-                            Start
-                        </button>
-                    </div>
+        function clearRoute() {
+            if (__route.layer) __route.layer.clearLayers();
+            if (__route.routeGraphic) { try { __route.routeGraphic.remove(); } catch {} __route.routeGraphic = null; }
+            __route.markers.forEach(m => m.remove());
+            __route.markers = [];
+        }
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        <div>
-                            <div class="text-sm text-gray-400 mb-1">Distance</div>
-                            <div class="text-white font-semibold">${route.distance}</div>
-                        </div>
-                        <div>
-                            <div class="text-sm text-gray-400 mb-1">Current</div>
-                            <div class="text-white font-semibold">${route.duration}</div>
-                        </div>
-                        <div>
-                            <div class="text-sm text-gray-400 mb-1">Predicted</div>
-                            <div class="text-blue-400 font-semibold">${route.predicted}</div>
-                        </div>
-                        <div>
-                            <div class="text-sm text-gray-400 mb-1">Savings</div>
-                            <div class="text-green-400 font-semibold">${route.savings}</div>
-                        </div>
-                    </div>
+        function fitRouteBounds(obj) {
+            if (!__route.map || !obj) return;
+            // If we received Leaflet LatLngBounds, fit directly
+            if (typeof obj.getSouthWest === 'function' && typeof obj.getNorthEast === 'function') {
+                const b = obj;
+                if (b.isValid && b.isValid()) {
+                    __route.map.fitBounds(b, { padding: [24, 24] });
+                } else {
+                    __route.map.fitBounds(b, { padding: [24, 24] });
+                }
+                return;
+            }
+            // Otherwise assume GeoJSON geometry/feature(s)
+            try {
+                const layer = L.geoJSON(obj);
+                const b = layer.getBounds();
+                if (b && b.isValid()) {
+                    __route.map.fitBounds(b, { padding: [24, 24] });
+                }
+            } catch (_) {
+                // No-op on invalid input
+            }
+        }
 
-                    <div class="flex items-center gap-2 flex-wrap text-sm">
-                        <span class="text-gray-400">Via:</span>
-                        ${route.roads.map((road, i) => `
-                            <span class="text-gray-300">${road}</span>
-                            ${i < route.roads.length - 1 ? '<span class="text-gray-600">→</span>' : ''}
-                        `).join('')}
+        async function showRouteResults() {
+            try {
+                initRoutePlannerMap();
+                const originText = document.getElementById('routeOrigin').value.trim();
+                const destText = document.getElementById('routeDestination').value.trim();
+                const departSel = document.getElementById('routeDepartureTime').value;
+                const customTimeEl = document.getElementById('routeCustomTime');
+                const customTime = !customTimeEl.classList.contains('hidden') ? customTimeEl.value : '';
+                let mode = (document.getElementById('routeMode')?.value) || 'driving';
+                if (!originText || !destText) { showToast('Please enter both origin and destination.', 'error'); return; }
+
+                const container = document.getElementById('routeResults');
+                container.innerHTML = '<div class="p-6 bg-gray-800 rounded-lg border border-gray-700 text-gray-300">Calculating route...</div>';
+
+                const [start, end] = await Promise.all([geocodePlace(originText), geocodePlace(destText)]);
+                let km = 0;
+                let mins = 0;
+                let effectiveMode = mode; // track final used/recommended mode
+                clearRoute();
+
+                // Guard: prevent Ferry/Flight for short land-only trips
+                if ((mode === 'ferry' || mode === 'flight')) {
+                    const straightKmGuard = haversineDistanceKm(start, end);
+                    let drivingOK = false;
+                    try {
+                        const drv = await routeOSRM(start, end);
+                        const drivenKmGuard = drv.distance / 1000;
+                        const ratioGuard = drivenKmGuard / Math.max(straightKmGuard, 1);
+                        const hasFerry = routeHasFerry(drv);
+                        drivingOK = !hasFerry && (ratioGuard <= 1.9); // reasonable land detour and no ferry
+                    } catch {}
+                    if ((straightKmGuard < 60 && drivingOK) || straightKmGuard < 30) {
+                        showToast('Ferry/Flight not allowed: short land-only trip detected. Using Driving instead.', 'error');
+                        mode = 'driving';
+                        effectiveMode = 'driving';
+                    }
+                }
+
+                if (mode === 'driving') {
+                    const straightKmDrive = haversineDistanceKm(start, end);
+                    try {
+                        const route = await routeOSRM(start, end);
+                        const drivenKm = route.distance / 1000;
+                        const ratio = drivenKm / Math.max(straightKmDrive, 1);
+                        const hasFerry = routeHasFerry(route);
+                        // If this looks like a water crossing, do not allow Driving
+                        if (hasFerry || straightKmDrive > 250 || (straightKmDrive > 100 && ratio > 1.7) || (straightKmDrive > 60 && ratio > 1.9) || ratio > 2.6) {
+                            const picked = straightKmDrive > 250 ? 'flight' : 'ferry';
+                            showToast(`Driving not allowed: water crossing detected. Switching to ${picked}.`, 'error');
+                            const color = picked === 'ferry' ? '#0ea5e9' : '#f97316';
+                            const line = L.polyline([[start.lat, start.lon], [end.lat, end.lon]], { color, weight: 5, opacity: .9 });
+                            line.addTo(__route.map); __route.routeGraphic = line;
+                            __route.markers.push(L.marker([start.lat, start.lon]));
+                            __route.markers.push(L.marker([end.lat, end.lon]));
+                            __route.markers.forEach(m => m.addTo(__route.map));
+                            __route.layer.clearLayers();
+                            fitRouteBounds(line.getBounds());
+                            km = straightKmDrive;
+                            if (picked === 'ferry') { const speed = 35; const overheadMin = 30; mins = Math.round((km / speed) * 60 + overheadMin); }
+                            else { const speed = 600; const overheadMin = 120; mins = Math.round((km / speed) * 60 + overheadMin); }
+                            effectiveMode = picked;
+                        } else {
+                            // Safe to use Driving
+                            __route.layer.addData(route.geometry);
+                            __route.markers.push(L.marker([start.lat, start.lon]));
+                            __route.markers.push(L.marker([end.lat, end.lon]));
+                            __route.markers.forEach(m => m.addTo(__route.map));
+                            fitRouteBounds(route.geometry);
+                            km = drivenKm;
+                            mins = Math.round(route.duration / 60);
+                            effectiveMode = 'driving';
+                        }
+                    } catch {
+                        // If OSRM fails, choose based on straight distance
+                        const picked = straightKmDrive > 250 ? 'flight' : 'ferry';
+                        showToast(`Driving not available for this route. Switching to ${picked}.`, 'error');
+                        const color = picked === 'ferry' ? '#0ea5e9' : '#f97316';
+                        const line = L.polyline([[start.lat, start.lon], [end.lat, end.lon]], { color, weight: 5, opacity: .9 });
+                        line.addTo(__route.map); __route.routeGraphic = line;
+                        __route.markers.push(L.marker([start.lat, start.lon]));
+                        __route.markers.push(L.marker([end.lat, end.lon]));
+                        __route.markers.forEach(m => m.addTo(__route.map));
+                        __route.layer.clearLayers();
+                        fitRouteBounds(line.getBounds());
+                        km = straightKmDrive;
+                        if (picked === 'ferry') { const speed = 35; const overheadMin = 30; mins = Math.round((km / speed) * 60 + overheadMin); }
+                        else { const speed = 600; const overheadMin = 120; mins = Math.round((km / speed) * 60 + overheadMin); }
+                        effectiveMode = picked;
+                    }
+                } else if (mode === 'ferry' || mode === 'flight') {
+                    // Draw straight polyline as an estimate
+                    const color = mode === 'ferry' ? '#0ea5e9' : '#f97316';
+                    const line = L.polyline([[start.lat, start.lon], [end.lat, end.lon]], { color, weight: 5, opacity: .9 });
+                    line.addTo(__route.map); __route.routeGraphic = line;
+                    __route.markers.push(L.marker([start.lat, start.lon]));
+                    __route.markers.push(L.marker([end.lat, end.lon]));
+                    __route.markers.forEach(m => m.addTo(__route.map));
+                    __route.layer.clearLayers();
+                    fitRouteBounds(line.getBounds());
+                    km = haversineDistanceKm(start, end);
+                    // Simple estimates: include overheads
+                    if (mode === 'ferry') {
+                        const speed = 35; // km/h average
+                        const overheadMin = 30; // boarding, docking
+                        mins = Math.round((km / speed) * 60 + overheadMin); effectiveMode = 'ferry';
+                    } else { // flight
+                        const speed = 600; // km/h average
+                        const overheadMin = 120; // check-in, security, taxiing
+                        mins = Math.round((km / speed) * 60 + overheadMin); effectiveMode = 'flight';
+                    }
+                } else if (mode === 'transit') {
+                    showToast('Public transit requires an external API (e.g., Google Directions). I can wire it with your API key.', 'error');
+                    // Fallback to driving if transit unavailable
+                    const route = await routeOSRM(start, end);
+                    __route.layer.addData(route.geometry);
+                    __route.markers.push(L.marker([start.lat, start.lon]));
+                    __route.markers.push(L.marker([end.lat, end.lon]));
+                    __route.markers.forEach(m => m.addTo(__route.map));
+                    fitRouteBounds(route.geometry);
+                    km = (route.distance / 1000);
+                    mins = Math.round(route.duration / 60);
+                    effectiveMode = 'driving';
+                }
+
+                container.innerHTML = '';
+                const header = document.createElement('div');
+                header.className = 'flex items-center justify-between mb-4';
+                const modeColor = effectiveMode === 'ferry' ? 'bg-cyan-600' : (effectiveMode === 'flight' ? 'bg-orange-600' : 'bg-blue-600');
+                const modeLabel = effectiveMode ? effectiveMode.charAt(0).toUpperCase() + effectiveMode.slice(1) : 'Driving';
+                header.innerHTML = `
+                    <h3 class="text-xl font-semibold text-white">Best Route</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 ${modeColor} text-white rounded-lg text-sm font-medium">Mode: ${modeLabel}</span>
+                        <span class="px-3 py-1 bg-gray-700 text-white rounded-lg text-sm font-medium">${departSel === 'custom' ? (customTime || 'Custom') : departSel}</span>
                     </div>
                 `;
-                
-                container.appendChild(routeCard);
-            });
+                container.appendChild(header);
 
-            // Re-initialize icons
-            lucide.createIcons();
+                const card = document.createElement('div');
+                card.className = 'p-6 bg-gray-800 rounded-lg border border-gray-700';
+                card.innerHTML = `
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-2">
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">Distance</div>
+                            <div class="text-white font-semibold">${km.toFixed(1)} km</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">Duration</div>
+                            <div class="text-white font-semibold">${mins} min</div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <div class="text-sm text-gray-400 mb-1">From → To</div>
+                            <div class="text-gray-300 break-words whitespace-normal">${start.name} → ${end.name}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-gray-500">
+                        <span>Powered by OpenStreetMap & OSRM</span>
+                        <span class="px-2 py-0.5 border border-gray-600 rounded">Mode: ${mode}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+                lucide.createIcons();
+            } catch (e) {
+                showToast(e.message || 'Unable to compute route.', 'error');
+            }
         }
 
         // Initialize Charts
@@ -1671,6 +1852,31 @@
 
         // Incident Form handling + Geolocation + Recent Reports persistence
         document.addEventListener('DOMContentLoaded', function() {
+            // Route Planner: UI bindings
+            const depSel = document.getElementById('routeDepartureTime');
+            const customInput = document.getElementById('routeCustomTime');
+            if (depSel && customInput) {
+                depSel.addEventListener('change', () => {
+                    if (depSel.value === 'custom') { customInput.classList.remove('hidden'); }
+                    else { customInput.classList.add('hidden'); }
+                });
+            }
+            const useMyLocBtn = document.getElementById('routeUseMyLocationBtn');
+            if (useMyLocBtn) {
+                useMyLocBtn.addEventListener('click', async () => {
+                    if (!navigator.geolocation) { showToast('Geolocation not supported.', 'error'); return; }
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
+                        const { latitude, longitude } = pos.coords;
+                        let label = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+                        try {
+                            const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+                            if (r.ok) { const d = await r.json(); if (d && d.display_name) label = d.display_name; }
+                        } catch {}
+                        const inp = document.getElementById('routeOrigin');
+                        if (inp) inp.value = label;
+                    }, () => showToast('Unable to get your location.', 'error'));
+                });
+            }
             // Keep original Incident form markup to allow remount without full reload
             (function captureIncidentTemplate(){
                 const c = document.getElementById('incidentFormContainer');
@@ -1723,7 +1929,7 @@
                 geolocateBtn.addEventListener('click', async function() {
                     const input = document.getElementById('incidentLocation');
                     if (!navigator.geolocation) {
-                        alert('Geolocation is not supported by your browser.');
+                        showToast('Geolocation is not supported by your browser.', 'error');
                         return;
                     }
                     navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -1742,7 +1948,7 @@
                             // Add a temporary marker highlight
                             L.circleMarker([latitude, longitude], { radius: 10, color: '#06b6d4', fillColor: '#06b6d4', fillOpacity: 0.5 }).addTo(__leaflet.map);
                         }
-                    }, () => alert('Unable to retrieve your location.'));
+                    }, () => showToast('Unable to retrieve your location.', 'error'));
                 });
             }
 
@@ -1775,6 +1981,7 @@
                                     <span class="${reportBadge(it.severity)} text-xs">${it.severity}</span>
                                 </div>
                                 <p class="text-gray-600 text-sm break-words">${it.location}</p>
+                                ${it.description ? `<p class="text-gray-500 text-sm break-words mt-1">${it.description}</p>` : ''}
                                 ${it.photo ? `<img src="${it.photo}" alt="report image" class="mt-2 max-h-40 rounded-lg border border-gray-300">` : ''}
                                 <div class="flex items-center gap-2 mt-2 text-sm text-gray-500">
                                     <span>${new Date(it.time).toLocaleString()}</span>
@@ -1797,7 +2004,7 @@
                     const description = document.getElementById('incidentDescription').value;
 
                     if (!type || !location) {
-                        alert('Please fill in all required fields');
+                        showToast('Please fill in all required fields', 'error');
                         return;
                     }
 
@@ -1861,14 +2068,14 @@
                 if (geolocateBtn2) {
                     geolocateBtn2.addEventListener('click', async function(){
                         const input = document.getElementById('incidentLocation');
-                        if (!navigator.geolocation) { alert('Geolocation is not supported by your browser.'); return; }
+                        if (!navigator.geolocation) { showToast('Geolocation is not supported by your browser.', 'error'); return; }
                         navigator.geolocation.getCurrentPosition(async (pos) => {
                             const { latitude, longitude } = pos.coords;
                             let label = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
                             try { const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`); if (resp.ok) { const data = await resp.json(); if (data && data.display_name) label = data.display_name; } } catch {}
                             if (input) input.value = label;
                             if (window.__leaflet && __leaflet.map) { __leaflet.map.setView([latitude, longitude], 14); L.circleMarker([latitude, longitude], { radius: 10, color: '#06b6d4', fillColor: '#06b6d4', fillOpacity: 0.5 }).addTo(__leaflet.map); }
-                        }, () => alert('Unable to retrieve your location.'));
+                        }, () => showToast('Unable to retrieve your location.', 'error'));
                     });
                 }
                 // Re-bind submit
@@ -1879,7 +2086,7 @@
                         const type = document.getElementById('incidentType').value;
                         const location = document.getElementById('incidentLocation').value;
                         const description = document.getElementById('incidentDescription').value;
-                        if (!type || !location) { alert('Please fill in all required fields'); return; }
+                        if (!type || !location) { showToast('Please fill in all required fields', 'error'); return; }
                         const typeLabel = type === 'accident' ? 'Accident' : type === 'roadwork' ? 'Roadwork' : type === 'hazard' ? 'Road Hazard' : 'Weather';
                         const severity = type === 'accident' ? 'high' : type === 'roadwork' ? 'medium' : 'low';
                         const reports = (function(){ try { return JSON.parse(localStorage.getItem('recentReports') || '[]'); } catch { return []; } })();
