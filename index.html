@@ -122,7 +122,11 @@
         /* Themed dark panels for key pages */
         #traffic-map-page .p-6.bg-white,
         #analytics-page .p-6.bg-white,
-        #incident-reporter-page .p-6.bg-white {
+        #incident-reporter-page .p-6.bg-white,
+        #admin-console-page .p-6.bg-white,
+        #prediction-page .p-6.bg-white,
+        #reporting-page .p-6.bg-white,
+        #profile-page .p-6.bg-white {
             background-color: rgba(26,58,82,0.92) !important; /* brand navy */
             border-color: rgba(6,182,212,0.25) !important;    /* brand cyan border */
             color: #e6f9ff; /* light foreground */
@@ -130,18 +134,38 @@
         #traffic-map-page .p-6.bg-white h3,
         #analytics-page .p-6.bg-white h3,
         #incident-reporter-page .p-6.bg-white h3,
+        #admin-console-page .p-6.bg-white h3,
+        #prediction-page .p-6.bg-white h3,
+        #reporting-page .p-6.bg-white h3,
+        #profile-page .p-6.bg-white h3,
         #traffic-map-page .p-6.bg-white .text-gray-900,
         #analytics-page .p-6.bg-white .text-gray-900,
         #incident-reporter-page .p-6.bg-white .text-gray-900,
+        #admin-console-page .p-6.bg-white .text-gray-900,
+        #prediction-page .p-6.bg-white .text-gray-900,
+        #reporting-page .p-6.bg-white .text-gray-900,
+        #profile-page .p-6.bg-white .text-gray-900,
         #traffic-map-page .p-6.bg-white .text-slate-900,
         #analytics-page .p-6.bg-white .text-slate-900,
-        #incident-reporter-page .p-6.bg-white .text-slate-900 { color: #e6f9ff !important; }
+        #incident-reporter-page .p-6.bg-white .text-slate-900,
+        #admin-console-page .p-6.bg-white .text-slate-900,
+        #prediction-page .p-6.bg-white .text-slate-900,
+        #reporting-page .p-6.bg-white .text-slate-900,
+        #profile-page .p-6.bg-white .text-slate-900 { color: #e6f9ff !important; }
         #traffic-map-page .p-6.bg-white .text-gray-700,
         #analytics-page .p-6.bg-white .text-gray-700,
         #incident-reporter-page .p-6.bg-white .text-gray-700,
+        #admin-console-page .p-6.bg-white .text-gray-700,
+        #prediction-page .p-6.bg-white .text-gray-700,
+        #reporting-page .p-6.bg-white .text-gray-700,
+        #profile-page .p-6.bg-white .text-gray-700,
         #traffic-map-page .p-6.bg-white .text-slate-700,
         #analytics-page .p-6.bg-white .text-slate-700,
-        #incident-reporter-page .p-6.bg-white .text-slate-700 { color: #d3f0f7 !important; }
+        #incident-reporter-page .p-6.bg-white .text-slate-700,
+        #admin-console-page .p-6.bg-white .text-slate-700,
+        #prediction-page .p-6.bg-white .text-slate-700,
+        #reporting-page .p-6.bg-white .text-slate-700,
+        #profile-page .p-6.bg-white .text-slate-700 { color: #d3f0f7 !important; }
         #traffic-map-page .p-6.bg-white .text-gray-600,
         #analytics-page .p-6.bg-white .text-gray-600,
         #incident-reporter-page .p-6.bg-white .text-gray-600,
@@ -152,7 +176,11 @@
         /* Darken page backgrounds to match brand and reduce glare */
         #traffic-map-page,
         #analytics-page,
-        #incident-reporter-page {
+        #incident-reporter-page,
+        #admin-console-page,
+        #prediction-page,
+        #reporting-page,
+        #profile-page {
             background: linear-gradient(180deg, #0f172a 0%, #1a3a52 100%) !important;
         }
 
@@ -160,9 +188,15 @@
         #incident-reporter-page input,
         #incident-reporter-page textarea,
         #incident-reporter-page select,
-        #incident-reporter-page .rounded-lg.border,
         #traffic-map-page .rounded-lg.border,
-        #analytics-page .rounded-lg.border {
+        #analytics-page .rounded-lg.border,
+        #admin-console-page .rounded-lg.border,
+        #prediction-page .rounded-lg.border,
+        #reporting-page .rounded-lg.border,
+        #profile-page .rounded-lg.border,
+        #profile-page input,
+        #profile-page select,
+        #profile-page textarea {
             background-color: rgba(255,255,255,0.06) !important;
             border-color: rgba(6,182,212,0.25) !important;
             color: #e6f9ff !important;
@@ -173,14 +207,22 @@
         /* Buttons inside dark panels */
         #traffic-map-page button,
         #analytics-page button,
-        #incident-reporter-page button {
+        #incident-reporter-page button,
+        #admin-console-page button,
+        #prediction-page button,
+        #reporting-page button,
+        #profile-page button {
             background-color: #06b6d4; /* brand accent */
             color: #0b2435;
             border: 1px solid rgba(6,182,212,0.35);
         }
         #traffic-map-page button:hover,
         #analytics-page button:hover,
-        #incident-reporter-page button:hover { background-color: #0891b2; }
+        #incident-reporter-page button:hover,
+        #admin-console-page button:hover,
+        #prediction-page button:hover,
+        #reporting-page button:hover,
+        #profile-page button:hover { background-color: #0891b2; }
 
         /* Typography: harmonize text colors on dark pages */
         #traffic-map-page h1,
@@ -194,7 +236,23 @@
         #incident-reporter-page h1,
         #incident-reporter-page h2,
         #incident-reporter-page h3,
-        #incident-reporter-page h4 {
+        #incident-reporter-page h4,
+        #admin-console-page h1,
+        #admin-console-page h2,
+        #admin-console-page h3,
+        #admin-console-page h4,
+        #prediction-page h1,
+        #prediction-page h2,
+        #prediction-page h3,
+        #prediction-page h4,
+        #reporting-page h1,
+        #reporting-page h2,
+        #reporting-page h3,
+        #reporting-page h4,
+        #profile-page h1,
+        #profile-page h2,
+        #profile-page h3,
+        #profile-page h4 {
             color: #ffffff !important;
         }
         #traffic-map-page p,
@@ -205,7 +263,19 @@
         #analytics-page span,
         #incident-reporter-page p,
         #incident-reporter-page li,
-        #incident-reporter-page span {
+        #incident-reporter-page span,
+        #admin-console-page p,
+        #admin-console-page li,
+        #admin-console-page span,
+        #prediction-page p,
+        #prediction-page li,
+        #prediction-page span,
+        #reporting-page p,
+        #reporting-page li,
+        #reporting-page span,
+        #profile-page p,
+        #profile-page li,
+        #profile-page span {
             color: #d3f0f7;
         }
         /* Map utility grays to brand-friendly tones within dark pages */
@@ -378,26 +448,34 @@
 
                 <!-- Desktop Navigation -->
                 <div class="desktop-nav hidden md:flex items-center gap-1">
-                    <button onclick="navigateTo('home')" class="nav-btn px-4 py-2 rounded-lg flex items-center gap-2" data-page="home">
+                    <button onclick="navigateTo('home')" class="nav-btn px-3 py-2 rounded-lg flex items-center gap-2" data-page="home">
                         <i data-lucide="home" class="w-4 h-4"></i>
                         <span>Home</span>
                     </button>
-                    <button onclick="navigateTo('traffic-map')" class="nav-btn px-4 py-2 rounded-lg flex items-center gap-2" data-page="traffic-map">
+                    <button onclick="navigateTo('traffic-map')" class="nav-btn px-3 py-2 rounded-lg flex items-center gap-2" data-page="traffic-map">
                         <i data-lucide="map-pin" class="w-4 h-4"></i>
                         <span>Traffic Map</span>
                     </button>
-                    <button onclick="navigateTo('route-planner')" class="nav-btn px-4 py-2 rounded-lg flex items-center gap-2" data-page="route-planner">
+                    <button onclick="navigateTo('route-planner')" class="nav-btn px-3 py-2 rounded-lg flex items-center gap-2" data-page="route-planner">
                         <i data-lucide="navigation" class="w-4 h-4"></i>
                         <span>Route Planner</span>
                     </button>
-                    <button onclick="navigateTo('analytics')" class="nav-btn px-4 py-2 rounded-lg flex items-center gap-2" data-page="analytics">
-                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-                        <span>Analytics</span>
-                    </button>
-                    <button onclick="navigateTo('incident-reporter')" class="nav-btn px-4 py-2 rounded-lg flex items-center gap-2" data-page="incident-reporter">
-                        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-                        <span>Report Incident</span>
-                    </button>
+                    <div class="relative">
+                        <button id="moreBtn" class="nav-btn px-3 py-2 rounded-lg flex items-center gap-2" onclick="toggleMoreDropdown()">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            <span>More</span>
+                        </button>
+                        <div id="moreDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                            <div class="py-1">
+                                <button onclick="navigateTo('analytics')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"><i data-lucide='bar-chart-3' class='w-4 h-4'></i><span>Analytics</span></button>
+                                <button onclick="navigateTo('incident-reporter')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"><i data-lucide='alert-triangle' class='w-4 h-4'></i><span>Report Incident</span></button>
+                                <button onclick="navigateTo('admin-console')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"><i data-lucide='settings' class='w-4 h-4'></i><span>Admin Console</span></button>
+                                <button onclick="navigateTo('prediction')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"><i data-lucide='activity' class='w-4 h-4'></i><span>Prediction</span></button>
+                                <button onclick="navigateTo('reporting')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"><i data-lucide='file-down' class='w-4 h-4'></i><span>Reporting</span></button>
+                                <button onclick="navigateTo('profile')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"><i data-lucide='user' class='w-4 h-4'></i><span>Profile</span></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Mobile Menu Button -->
@@ -428,6 +506,22 @@
                     <button onclick="navigateTo('incident-reporter')" class="mobile-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="incident-reporter">
                         <i data-lucide="alert-triangle" class="w-5 h-5"></i>
                         <span>Report Incident</span>
+                    </button>
+                    <button onclick="navigateTo('admin-console')" class="mobile-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="admin-console">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                        <span>Admin Console</span>
+                    </button>
+                    <button onclick="navigateTo('prediction')" class="mobile-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="prediction">
+                        <i data-lucide="activity" class="w-5 h-5"></i>
+                        <span>Prediction</span>
+                    </button>
+                    <button onclick="navigateTo('reporting')" class="mobile-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="reporting">
+                        <i data-lucide="file-down" class="w-5 h-5"></i>
+                        <span>Reporting</span>
+                    </button>
+                    <button onclick="navigateTo('profile')" class="mobile-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="profile">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                        <span>Profile</span>
                     </button>
                 </div>
             </div>
@@ -519,64 +613,64 @@
                     <!-- Features grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4">
-                                <i data-lucide="brain" class="w-6 h-6 text-white"></i>
+                            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
+                                <i data-lucide="brain" class="w-6 h-6 text-blue-600"></i>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Predictive Analytics</h3>
                             <p class="text-gray-600">Machine learning models using LSTM and ensemble learning to forecast traffic conditions with high accuracy.</p>
                         </div>
 
                         <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4">
-                                <i data-lucide="cloud" class="w-6 h-6 text-white"></i>
+                            <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mb-4">
+                                <i data-lucide="cloud" class="w-6 h-6 text-purple-600"></i>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Real-time Data Integration</h3>
                             <p class="text-gray-600">Combines historical traffic data, weather conditions, and incident reports for comprehensive predictions.</p>
                         </div>
 
                         <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-4">
-                                <i data-lucide="bell" class="w-6 h-6 text-white"></i>
+                            <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center mb-4">
+                                <i data-lucide="bell" class="w-6 h-6 text-orange-600"></i>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Smart Alerts</h3>
                             <p class="text-gray-600">Proactive notifications for predicted congestion hotspots and alternative route suggestions.</p>
                         </div>
 
                         <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-4">
-                                <i data-lucide="map" class="w-6 h-6 text-white"></i>
+                            <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mb-4">
+                                <i data-lucide="map" class="w-6 h-6 text-green-600"></i>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Interactive Mapping</h3>
                             <p class="text-gray-600">Visual heatmaps and route planning with predicted travel times for commuters.</p>
                         </div>
 
                         <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center mb-4">
-                                <i data-lucide="bar-chart-3" class="w-6 h-6 text-white"></i>
+                            <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center mb-4">
+                                <i data-lucide="bar-chart-3" class="w-6 h-6 text-indigo-600"></i>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Data Visualization</h3>
                             <p class="text-gray-600">Comprehensive dashboards for traffic managers with historical charts and analytics.</p>
                         </div>
 
                         <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center mb-4">
-                                <i data-lucide="shield" class="w-6 h-6 text-white"></i>
+                            <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center mb-4">
+                                <i data-lucide="shield" class="w-6 h-6 text-gray-600"></i>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Privacy-First Design</h3>
                             <p class="text-gray-600">Anonymized data processing with secure, encrypted communications throughout the system.</p>
                         </div>
 
                         <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center mb-4">
-                                <i data-lucide="smartphone" class="w-6 h-6 text-white"></i>
+                            <div class="w-12 h-12 rounded-lg bg-teal-100 flex items-center justify-center mb-4">
+                                <i data-lucide="smartphone" class="w-6 h-6 text-teal-600"></i>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Cross-Platform</h3>
                             <p class="text-gray-600">Seamless experience across web and mobile platforms with offline caching capabilities.</p>
                         </div>
 
                         <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center mb-4">
-                                <i data-lucide="zap" class="w-6 h-6 text-white"></i>
+                            <div class="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center mb-4">
+                                <i data-lucide="zap" class="w-6 h-6 text-yellow-600"></i>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">High Performance</h3>
                             <p class="text-gray-600">Optimized inference with sub-500ms response times for real-time traffic predictions.</p>
@@ -874,7 +968,7 @@
                             <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
                                 <i data-lucide="activity" class="w-6 h-6 text-blue-600"></i>
                             </div>
-                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded font-semibold">+12%</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded mb-2 font-semibold">+12%</span>
                         </div>
                         <div class="text-3xl font-bold text-gray-900 mb-1">95.2%</div>
                         <p class="text-gray-600">Prediction Accuracy</p>
@@ -885,7 +979,7 @@
                             <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
                                 <i data-lucide="alert-circle" class="w-6 h-6 text-orange-600"></i>
                             </div>
-                            <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded font-semibold">-5%</span>
+                            <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded mb-2 font-semibold">-5%</span>
                         </div>
                         <div class="text-3xl font-bold text-gray-900 mb-1">32</div>
                         <p class="text-gray-600">Active Incidents</p>
@@ -896,7 +990,7 @@
                             <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
                                 <i data-lucide="trending-down" class="w-6 h-6 text-green-600"></i>
                             </div>
-                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded font-semibold">-18min</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded mb-2 font-semibold">-18min</span>
                         </div>
                         <div class="text-3xl font-bold text-gray-900 mb-1">18 min</div>
                         <p class="text-gray-600">Avg. Time Saved</p>
@@ -907,7 +1001,7 @@
                             <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
                                 <i data-lucide="check-circle" class="w-6 h-6 text-purple-600"></i>
                             </div>
-                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded font-semibold">Live</span>
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded mb-2 font-semibold">Live</span>
                         </div>
                         <div class="text-3xl font-bold text-gray-900 mb-1">156K</div>
                         <p class="text-gray-600">Active Users</p>
@@ -1180,6 +1274,214 @@
                 </div>
             </div>
         </div>
+
+        <!-- Admin Console Page -->
+        <div id="admin-console-page" class="page-section min-h-screen py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12">
+                    <div class="inline-block px-4 py-2 bg-gray-100 text-gray-700 rounded-full mb-4 font-semibold">
+                        Admin Console
+                    </div>
+                    <h2 class="text-4xl sm:text-5xl text-white mb-4 font-bold">
+                        Operations & Monitoring
+                    </h2>
+                    <p class="text-xl text-gray-400 max-w-3xl mx-auto in">
+                        Manage datasets, retrain models, view system health, logs, and performance
+                    </p>
+                 
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Dataset Uploader</h3>
+                        <input id="adminDatasetFile" type="file" accept=".csv,.parquet,.json,.zip" class="w-full mb-3 px-3 py-2 border border-gray-300 rounded-lg">
+                        <button id="adminUploadBtn" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-medium">Upload Dataset</button>
+                        <div id="adminUploadStatus" class="mt-3 text-sm text-gray-600"></div>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Model Retrain</h3>
+                        <button id="adminRetrainBtn" class="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium">Trigger Retrain</button>
+                        <div class="mt-4 w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div id="adminRetrainProgress" class="h-full bg-purple-600 transition-all" style="width: 0%"></div>
+                        </div>
+                        <div id="adminRetrainStatus" class="mt-3 text-sm text-gray-600"></div>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">System Health</h3>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-gray-900" id="healthCPU">--%</div>
+                                <div class="text-sm text-gray-600">CPU</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-gray-900" id="healthMem">--%</div>
+                                <div class="text-sm text-gray-600">Memory</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-gray-900" id="healthUptime">--h</div>
+                                <div class="text-sm text-gray-600">Uptime</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Inference Latency</h3>
+                                <span class="px-3 py-1 border border-gray-300 rounded-lg text-sm text-gray-600">ms</span>
+                            </div>
+                            <div class="chart-container"><canvas id="adminLatencyChart"></canvas></div>
+                        </div>
+                        <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Throughput</h3>
+                                <span class="px-3 py-1 border border-gray-300 rounded-lg text-sm text-gray-600">req/min</span>
+                            </div>
+                            <div class="chart-container"><canvas id="adminThroughputChart"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">System Logs</h3>
+                                <button id="adminAddLogBtn" class="px-3 py-1 bg-gray-900 text-white rounded-lg text-sm">Add Sample Log</button>
+                            </div>
+                            <div id="adminLogs" class="space-y-3 max-h-80 overflow-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prediction Module Page -->
+        <div id="prediction-page" class="page-section min-h-screen py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12">
+                    <div class="inline-block px-4 py-2 bg-green-100 text-green-700 rounded-full mb-4 font-semibold">Prediction Module</div>
+                    <h2 class="text-4xl sm:text-5xl text-white mb-4 font-bold">Request Travel-Time Prediction</h2>
+                    <p class="text-xl text-gray-400 max-w-3xl mx-auto in">Predict travel time for a route or corridor with confidence intervals</p>
+                </div>
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="p-6 bg-white rounded-lg border border-gray-200 lg:col-span-1">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Inputs</h3>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                        <select id="predType" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4">
+                            <option value="route">Route (Origin → Destination)</option>
+                            <option value="corridor">Corridor (e.g., EDSA)</option>
+                        </select>
+                        <div id="predRouteInputs">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Origin</label>
+                            <input id="predOrigin" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-3" placeholder="e.g., Quezon City Hall" />
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Destination</label>
+                            <input id="predDestination" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-3" placeholder="e.g., Makati CBD" />
+                        </div>
+                        <div id="predCorridorInputs" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Corridor</label>
+                            <input id="predCorridor" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-3" placeholder="e.g., EDSA" />
+                        </div>
+                        <button id="predSubmit" class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium">Predict</button>
+                        <div class="mt-3 text-sm text-gray-600">Predictions are simulated; connect your API to power this.</div>
+                    </div>
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="p-6 bg-white rounded-lg border border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Result</h3>
+                            <div id="predResult" class="text-gray-700">No prediction yet.</div>
+                        </div>
+                        <div class="p-6 bg-white rounded-lg border border-gray-200">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Confidence Intervals</h3>
+                                <span class="px-3 py-1 border border-gray-300 rounded-lg text-sm text-gray-600">p50/p90/p95</span>
+                            </div>
+                            <div class="chart-container"><canvas id="predIntervalsChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporting & Export Page -->
+        <div id="reporting-page" class="page-section min-h-screen py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12">
+                    <div class="inline-block px-4 py-2 bg-amber-100 text-amber-700 rounded-full mb-4 font-semibold">Reporting & Export</div>
+                    <h2 class="text-4xl sm:text-5xl text-white mb-4 font-bold">Historical Predictions & Logs</h2>
+                    <p class="text-xl text-gray-400 max-w-3xl mx-auto in">Review and export data for offline analysis</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg border border-gray-200 mb-6">
+                    <div class="flex flex-wrap gap-2">
+                        <button id="exportPredJSON" class="px-4 py-2 bg-gray-900 text-white rounded-lg">Export JSON</button>
+                        <button id="exportPredCSV" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Export CSV</button>
+                        <button id="clearPredLogs" class="px-4 py-2 bg-red-600 text-white rounded-lg">Clear Logs</button>
+                    </div>
+                </div>
+                <div class="p-6 bg-white rounded-lg border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Prediction Logs</h3>
+                    <div id="predLogs" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile / Authentication Page -->
+        <div id="profile-page" class="page-section min-h-screen py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
+            <div class="max-w-5xl mx-auto">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="p-6 bg-white rounded-lg border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Authentication</h3>
+                        <div id="authArea">
+                            <div id="authLoggedOut">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input id="authEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-3" placeholder="you@example.com" />
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                <input id="authPassword" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4" placeholder="••••••••" />
+                                <div class="flex gap-2">
+                                    <button id="authLoginBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Log in</button>
+                                    <button id="authSignupBtn" class="px-4 py-2 bg-gray-900 text-white rounded-lg">Sign up</button>
+                                </div>
+                            </div>
+                            <div id="authLoggedIn" class="hidden">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <div class="text-sm text-gray-500">Signed in as</div>
+                                        <div id="authUserEmail" class="text-gray-900 font-medium">-</div>
+                                    </div>
+                                    <button id="authLogoutBtn" class="px-3 py-1 bg-red-600 text-white rounded-lg">Log out</button>
+                                </div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
+                                <input id="authDisplayName" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2" placeholder="Your name" />
+                                <button id="authSaveProfile" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Save Profile</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Notification Preferences</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-2">
+                                <input id="prefAlerts" type="checkbox" class="w-4 h-4">
+                                <span>Traffic alerts</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input id="prefReports" type="checkbox" class="w-4 h-4">
+                                <span>Community reports</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input id="prefTips" type="checkbox" class="w-4 h-4">
+                                <span>Product tips</span>
+                            </label>
+                            <button id="savePrefsBtn" class="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg">Save Preferences</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 p-6 bg-white rounded-lg border border-gray-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Saved Routes</h3>
+                        <button id="clearSavedRoutes" class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">Clear</button>
+                    </div>
+                    <div id="savedRoutesList" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -1262,10 +1564,10 @@
             <!-- Bottom -->
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="text-gray-400 text-center md:text-left">
-                    © 2025 IntelliTraffic. A National University Capstone Project.
+                    &copy; 2025 IntelliTraffic. A National University Capstone Project.
                 </p>
                 <div class="text-gray-400 text-center md:text-right">
-                    <p>Alcantara • Hernandez • Tan • Viray</p>
+                    <p>Alcantara &bull; Hernandez &bull; Tan &bull; Viray</p>
                     <p class="text-sm">Adviser: Irene Balmes</p>
                 </div>
             </div>
@@ -1321,6 +1623,9 @@
             // Close mobile menu
             document.getElementById('mobileMenu').classList.remove('active');
             
+            // Close More dropdown if open
+            try { const dd = document.getElementById('moreDropdown'); if (dd) dd.classList.add('hidden'); } catch {}
+            
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -1338,6 +1643,14 @@
                 if (d) d.value = '';
             } else if (page === 'incident-reporter') {
                 if (typeof renderRecentReports === 'function') renderRecentReports();
+            } else if (page === 'admin-console') {
+                if (typeof initAdminConsole === 'function') initAdminConsole();
+            } else if (page === 'prediction') {
+                if (typeof initPrediction === 'function') initPrediction();
+            } else if (page === 'reporting') {
+                if (typeof initReporting === 'function') initReporting();
+            } else if (page === 'profile') {
+                if (typeof initProfile === 'function') initProfile();
             }
             
             // Re-trigger fade-up animations for the new page
@@ -1677,7 +1990,7 @@
                             __route.markers.push(L.marker([end.lat, end.lon]));
                             __route.markers.forEach(m => m.addTo(__route.map));
                             fitRouteBounds(route.geometry);
-                            km = drivenKm;
+                            km = (route.distance / 1000);
                             mins = Math.round(route.duration / 60);
                             effectiveMode = 'driving';
                         }
@@ -1770,6 +2083,23 @@
                     </div>
                 `;
                 container.appendChild(card);
+                // Save route button if logged in
+                try {
+                    if (typeof getAuth === 'function' && getAuth()) {
+                        const saveBtn = document.createElement('button');
+                        saveBtn.className = 'mt-3 px-3 py-2 bg-green-600 text-white rounded';
+                        saveBtn.textContent = 'Save this route';
+                        saveBtn.addEventListener('click', () => {
+                            const u = getAuth(); if (!u) { showToast('Please log in', 'error'); return; }
+                            const label = `${start.name.split(',')[0]} → ${end.name.split(',')[0]}`;
+                            (u.savedRoutes = u.savedRoutes || []).unshift({ from: start.name, to: end.name, km, mins, label });
+                            u.savedRoutes = u.savedRoutes.slice(0, 50);
+                            setAuth(u);
+                            showToast('Route saved');
+                        });
+                        container.appendChild(saveBtn);
+                    }
+                } catch {}
                 lucide.createIcons();
             } catch (e) {
                 showToast(e.message || 'Unable to compute route.', 'error');
@@ -1853,6 +2183,193 @@
                 });
             }
         }
+
+        // ===== Auth & Profile =====
+        function getAuth() { try { return JSON.parse(localStorage.getItem('authUser')||'null'); } catch { return null; } }
+        function setAuth(u) { if (u) localStorage.setItem('authUser', JSON.stringify(u)); else localStorage.removeItem('authUser'); }
+        function renderSavedRoutes() {
+            const list = document.getElementById('savedRoutesList'); if (!list) return;
+            const u = getAuth(); const items = (u && u.savedRoutes) ? u.savedRoutes : [];
+            list.innerHTML = items.length ? items.map((r,i)=>`<div class="p-3 border rounded flex items-center justify-between"><div><div class="font-medium text-gray-900">${r.label||('Route '+(i+1))}</div><div class="text-sm text-gray-600">${r.from} → ${r.to} • ${r.km?.toFixed? r.km.toFixed(1):r.km} km • ${r.mins} min</div></div><button data-i="${i}" class="px-3 py-1 bg-red-600 text-white rounded text-sm rmRoute">Remove</button></div>`).join('') : '<div class="text-gray-500">No saved routes.</div>';
+            list.querySelectorAll('.rmRoute').forEach(btn=>{ btn.addEventListener('click', () => { const idx = +btn.getAttribute('data-i'); const u2 = getAuth(); if (!u2) return; u2.savedRoutes.splice(idx,1); setAuth(u2); renderSavedRoutes(); }); });
+        }
+        function initProfile() {
+            const user = getAuth();
+            const out = document.getElementById('authLoggedOut');
+            const inn = document.getElementById('authLoggedIn');
+            if (user) {
+                if (out) out.classList.add('hidden');
+                if (inn) inn.classList.remove('hidden');
+                const em = document.getElementById('authUserEmail'); if (em) em.textContent = user.email||'';
+                const dn = document.getElementById('authDisplayName'); if (dn) dn.value = user.name||'';
+                // prefs
+                const alerts = document.getElementById('prefAlerts'); if (alerts) alerts.checked = !!(user.prefs&&user.prefs.alerts);
+                const reports = document.getElementById('prefReports'); if (reports) reports.checked = !!(user.prefs&&user.prefs.reports);
+                const tips = document.getElementById('prefTips'); if (tips) tips.checked = !!(user.prefs&&user.prefs.tips);
+            } else {
+                if (out) out.classList.remove('hidden');
+                if (inn) inn.classList.add('hidden');
+            }
+            const login = document.getElementById('authLoginBtn');
+            const signup = document.getElementById('authSignupBtn');
+            const logout = document.getElementById('authLogoutBtn');
+            const saveP = document.getElementById('authSaveProfile');
+            const savePrefs = document.getElementById('savePrefsBtn');
+            const clearSaved = document.getElementById('clearSavedRoutes');
+            if (login) login.onclick = () => {
+                const email = document.getElementById('authEmail').value.trim(); const pw = document.getElementById('authPassword').value;
+                if (!email || !pw) { showToast('Enter email and password', 'error'); return; }
+                setAuth({ email, name: '', savedRoutes: [], prefs: { alerts:true, reports:true, tips:false } });
+                showToast('Logged in'); initProfile();
+            };
+            if (signup) signup.onclick = () => {
+                const email = document.getElementById('authEmail').value.trim(); const pw = document.getElementById('authPassword').value;
+                if (!email || !pw) { showToast('Enter email and password', 'error'); return; }
+                setAuth({ email, name: '', savedRoutes: [], prefs: { alerts:true, reports:true, tips:false } });
+                showToast('Account created'); initProfile();
+            };
+            if (logout) logout.onclick = () => { setAuth(null); showToast('Logged out'); initProfile(); };
+            if (saveP) saveP.onclick = () => { const u = getAuth()||{}; u.name = document.getElementById('authDisplayName').value; setAuth(u); showToast('Profile saved'); initProfile(); };
+            if (savePrefs) savePrefs.onclick = () => { const u = getAuth()||{}; u.prefs = { alerts: document.getElementById('prefAlerts').checked, reports: document.getElementById('prefReports').checked, tips: document.getElementById('prefTips').checked }; setAuth(u); showToast('Preferences saved'); };
+            if (clearSaved) clearSaved.onclick = () => { const u = getAuth()||{}; u.savedRoutes = []; setAuth(u); renderSavedRoutes(); showToast('Saved routes cleared'); };
+            renderSavedRoutes();
+        }
+
+        // ===== Prediction & Reporting =====
+        function loadPredLogs() { try { return JSON.parse(localStorage.getItem('predictionLogs')||'[]'); } catch { return []; } }
+        function savePredLogs(list) { localStorage.setItem('predictionLogs', JSON.stringify(list.slice(0,200))); }
+        function renderPredLogs() {
+            const el = document.getElementById('predLogs'); if (!el) return;
+            const items = loadPredLogs();
+            el.innerHTML = items.length ? items.map(it => `<div class="p-3 border rounded"><div class="text-sm text-gray-500">${new Date(it.time).toLocaleString()}</div><div class="text-gray-800">${it.type==='route' ? `${it.from} → ${it.to}` : it.corridor}</div><div class="text-sm text-gray-600">p50: ${it.p50} min • p90: ${it.p90} min • p95: ${it.p95} min${it.km? ` • ${Number(it.km).toFixed(1)} km` : ''}</div></div>`).join('') : '<div class="text-gray-500">No logs yet.</div>';
+        }
+        function predLogsToCSV(items) {
+            if (!items || !items.length) return 'time,type,from,to,corridor,km,p50,p90,p95\n';
+            const header = ['time','type','from','to','corridor','km','p50','p90','p95'];
+            const rows = items.map(it => header.map(k => (k==='time')? new Date(it[k]||it.time).toISOString() : (it[k]!==undefined? it[k] : '')).join(','));
+            return header.join(',')+'\n'+rows.join('\n');
+        }
+        function downloadFile(filename, blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000); }
+        function initPrediction() {
+            const typeSel = document.getElementById('predType');
+            const routeWrap = document.getElementById('predRouteInputs');
+            const corWrap = document.getElementById('predCorridorInputs');
+            if (typeSel) typeSel.onchange = () => { if (typeSel.value === 'route') { routeWrap.classList.remove('hidden'); corWrap.classList.add('hidden'); } else { routeWrap.classList.add('hidden'); corWrap.classList.remove('hidden'); } };
+            const btn = document.getElementById('predSubmit'); const out = document.getElementById('predResult');
+            if (btn) btn.onclick = async () => {
+                try {
+                    if (typeSel.value === 'route') {
+                        const o = document.getElementById('predOrigin').value.trim();
+                        const d = document.getElementById('predDestination').value.trim();
+                        if (!o || !d) { showToast('Enter origin and destination', 'error'); return; }
+                        const [start, end] = await Promise.all([geocodePlace(o), geocodePlace(d)]);
+                        const route = await routeOSRM(start, end).catch(()=>null);
+                        let km, mins; if (route) { km = (route.distance/1000); mins = Math.round(route.duration/60); } else { km = haversineDistanceKm({lat:start.lat, lon:start.lon}, {lat:end.lat, lon:end.lon}); mins = Math.round(km/35*60); }
+                        const base = mins; const p50 = base; const p90 = Math.round(base*1.25); const p95 = Math.round(base*1.4);
+                        out.innerHTML = `<div class="text-gray-900 text-xl font-semibold mb-2">${base} minutes (p50)</div><div class="text-gray-600">Distance: ${km.toFixed(1)} km</div><div class="mt-2 text-sm text-gray-500">p90: ${p90} min • p95: ${p95} min</div><button id="logPredBtn" class="mt-3 px-3 py-2 bg-gray-900 text-white rounded">Log Prediction</button>`;
+                        const ctx = document.getElementById('predIntervalsChart'); if (ctx) { if (ctx.chart) ctx.chart.destroy(); ctx.chart = new Chart(ctx, { type: 'bar', data: { labels: ['p50','p90','p95'], datasets: [{ data: [p50,p90,p95], backgroundColor: ['#22c55e','#f59e0b','#ef4444'], borderRadius: 8 }] }, options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } } }); }
+                        const btnLog = document.getElementById('logPredBtn'); if (btnLog) btnLog.onclick = () => { const logs = loadPredLogs(); logs.unshift({ time: Date.now(), type: 'route', from: o, to: d, km, p50, p90, p95 }); savePredLogs(logs); showToast('Prediction logged'); };
+                    } else {
+                        const corridor = document.getElementById('predCorridor').value.trim(); if (!corridor) { showToast('Enter a corridor', 'error'); return; }
+                        const base = Math.round(20+Math.random()*30); const p50 = base, p90 = Math.round(base*1.2), p95 = Math.round(base*1.35);
+                        out.innerHTML = `<div class=\"text-gray-900 text-xl font-semibold mb-2\">${base} minutes (p50)</div><div class=\"text-gray-600\">Corridor: ${corridor}</div><div class=\"mt-2 text-sm text-gray-500\">p90: ${p90} min • p95: ${p95} min</div><button id=\"logPredBtn\" class=\"mt-3 px-3 py-2 bg-gray-900 text-white rounded\">Log Prediction</button>`;
+                        const ctx = document.getElementById('predIntervalsChart'); if (ctx) { if (ctx.chart) ctx.chart.destroy(); ctx.chart = new Chart(ctx, { type: 'bar', data: { labels: ['p50','p90','p95'], datasets: [{ data: [p50,p90,p95], backgroundColor: ['#22c55e','#f59e0b','#ef4444'], borderRadius: 8 }] }, options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } } }); }
+                        const btnLog = document.getElementById('logPredBtn'); if (btnLog) btnLog.onclick = () => { const logs = loadPredLogs(); logs.unshift({ time: Date.now(), type: 'corridor', corridor, p50, p90, p95 }); savePredLogs(logs); showToast('Prediction logged'); };
+                    }
+                } catch (e) { showToast('Prediction failed', 'error'); }
+            };
+        }
+        function initReporting() {
+            renderPredLogs();
+            const j = document.getElementById('exportPredJSON'); if (j) j.onclick = () => { const data = loadPredLogs(); downloadFile('prediction-logs.json', new Blob([JSON.stringify(data,null,2)], {type:'application/json'})); };
+            const c = document.getElementById('exportPredCSV'); if (c) c.onclick = () => { const data = loadPredLogs(); const csv = predLogsToCSV(data); downloadFile('prediction-logs.csv', new Blob([csv], {type:'text/csv'})); };
+            const clr = document.getElementById('clearPredLogs'); if (clr) clr.onclick = () => { savePredLogs([]); renderPredLogs(); showToast('Logs cleared'); };
+        }
+
+        // ===== Admin Console =====
+        function initAdminConsole() {
+            try { lucide.createIcons(); } catch {}
+            const upBtn = document.getElementById('adminUploadBtn');
+            const upFile = document.getElementById('adminDatasetFile');
+            const upStatus = document.getElementById('adminUploadStatus');
+            if (upBtn && upFile) {
+                upBtn.onclick = () => {
+                    const file = upFile.files && upFile.files[0];
+                    if (!file) { showToast('Select a dataset file first', 'error'); return; }
+                    upStatus.textContent = `Uploading ${file.name}...`;
+                    setTimeout(() => { upStatus.textContent = 'Processing...'; }, 800);
+                    setTimeout(() => { upStatus.textContent = 'Completed'; showToast('Dataset uploaded'); }, 1800);
+                };
+            }
+            const retrainBtn = document.getElementById('adminRetrainBtn');
+            const retrainBar = document.getElementById('adminRetrainProgress');
+            const retrainStatus = document.getElementById('adminRetrainStatus');
+            if (retrainBtn && retrainBar) {
+                retrainBtn.onclick = () => {
+                    showToast('Retraining started');
+                    let p = 0;
+                    retrainStatus.textContent = 'Initializing...';
+                    const t = setInterval(() => {
+                        p = Math.min(100, p + Math.floor(5 + Math.random()*12));
+                        retrainBar.style.width = p + '%';
+                        retrainStatus.textContent = p < 100 ? `Training... ${p}%` : 'Retrain completed';
+                        if (p >= 100) clearInterval(t);
+                    }, 300);
+                };
+            }
+            const cpu = document.getElementById('healthCPU');
+            const mem = document.getElementById('healthMem');
+            const up = document.getElementById('healthUptime');
+            if (cpu && mem && up) {
+                const seed = Date.now()%1000;
+                const r = (b) => Math.min(99, Math.max(1, Math.round(50 + 40*Math.sin((Date.now()+b)/30000))));
+                cpu.textContent = r(0) + '%';
+                mem.textContent = r(5000) + '%';
+                up.textContent = Math.floor((seed/37)%72) + 'h';
+            }
+            const logs = document.getElementById('adminLogs');
+            const addLog = document.getElementById('adminAddLogBtn');
+            function pushLog(msg, level) {
+                if (!logs) return;
+                const levelCls = level === 'error' ? 'text-red-700 bg-red-50 border-red-200' : level === 'warn' ? 'text-yellow-700 bg-yellow-50 border-yellow-200' : 'text-gray-700 bg-gray-50 border-gray-200';
+                const div = document.createElement('div');
+                div.className = `p-3 border rounded ${levelCls}`;
+                const ts = new Date().toLocaleString();
+                div.textContent = `[${ts}] ${msg}`;
+                logs.prepend(div);
+            }
+            if (addLog) {
+                addLog.onclick = () => {
+                    const kinds = ['info','warn','error'];
+                    const k = kinds[Math.floor(Math.random()*kinds.length)];
+                    pushLog(k === 'error' ? 'Model inference failed on node-2' : k === 'warn' ? 'High latency detected (>800ms)' : 'Health check OK', k);
+                };
+            }
+            const latCtx = document.getElementById('adminLatencyChart');
+            if (latCtx && !latCtx.chart) {
+                latCtx.chart = new Chart(latCtx, { type: 'line', data: { labels: Array.from({length: 12}, (_,i)=>`${i+1}m`), datasets: [{ label: 'p95 latency', data: Array.from({length: 12}, ()=> Math.round(300+Math.random()*400)), borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', tension: 0.35 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+            }
+            const thrCtx = document.getElementById('adminThroughputChart');
+            if (thrCtx && !thrCtx.chart) {
+                thrCtx.chart = new Chart(thrCtx, { type: 'bar', data: { labels: Array.from({length: 12}, (_,i)=>`${i+1}m`), datasets: [{ label: 'req/min', data: Array.from({length: 12}, ()=> Math.round(80+Math.random()*60)), backgroundColor: '#3b82f6', borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+            }
+        }
+
+        // Navbar More dropdown handlers
+        function toggleMoreDropdown() {
+            const dd = document.getElementById('moreDropdown');
+            if (!dd) return;
+            dd.classList.toggle('hidden');
+        }
+        document.addEventListener('click', function(e) {
+            const dd = document.getElementById('moreDropdown');
+            const btn = document.getElementById('moreBtn');
+            if (!dd || !btn) return;
+            // If dropdown is open and click is outside both button and dropdown, close it
+            if (!dd.classList.contains('hidden') && !dd.contains(e.target) && !btn.contains(e.target)) {
+                dd.classList.add('hidden');
+            }
+        });
 
         // Incident Form handling + Geolocation + Recent Reports persistence
         document.addEventListener('DOMContentLoaded', function() {
@@ -2093,7 +2610,7 @@
                         if (!type || !location) { showToast('Please fill in all required fields', 'error'); return; }
                         const typeLabel = type === 'accident' ? 'Accident' : type === 'roadwork' ? 'Roadwork' : type === 'hazard' ? 'Road Hazard' : 'Weather';
                         const severity = type === 'accident' ? 'high' : type === 'roadwork' ? 'medium' : 'low';
-                        const reports = (function(){ try { return JSON.parse(localStorage.getItem('recentReports') || '[]'); } catch { return []; } })();
+                        const reports = (function(){ try { return JSON.parse(localStorage.getItem('recentReports')||'[]'); } catch { return []; } })();
                         reports.unshift({ type, typeLabel, severity, location, description, time: Date.now(), photo: photoDataUrl2 });
                         localStorage.setItem('recentReports', JSON.stringify(reports.slice(0,20)));
                         if (typeof renderRecentReports === 'function') { renderRecentReports(); }
