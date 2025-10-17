@@ -1470,6 +1470,7 @@
                                 <span>Product tips</span>
                             </label>
                             <button id="savePrefsBtn" class="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg">Save Preferences</button>
+                            <button id="enablePushBtn" class="mt-2 px-4 py-2 bg-gray-900 text-white rounded-lg">Enable Push Notifications</button>
                         </div>
                     </div>
                 </div>
@@ -2097,7 +2098,19 @@
                             setAuth(u);
                             showToast('Route saved');
                         });
-                        container.appendChild(saveBtn);
+                        const alertsBtn = document.createElement('button');
+                        alertsBtn.className = 'mt-3 ml-2 px-3 py-2 bg-yellow-500 text-black rounded';
+                        alertsBtn.textContent = 'Subscribe to alerts';
+                        alertsBtn.addEventListener('click', () => {
+                            const uNow = getAuth(); if (!uNow) { showToast('Please log in', 'error'); return; }
+                            const labelNow = `${start.name.split(',')[0]} → ${end.name.split(',')[0]}`;
+                            subscribe(labelNow);
+                            showToast('Subscribed to route alerts');
+                        });
+                        const group = document.createElement('div');
+                        group.appendChild(saveBtn);
+                        group.appendChild(alertsBtn);
+                        container.appendChild(group);
                     }
                 } catch {}
                 lucide.createIcons();
@@ -2192,6 +2205,29 @@
             const u = getAuth(); const items = (u && u.savedRoutes) ? u.savedRoutes : [];
             list.innerHTML = items.length ? items.map((r,i)=>`<div class="p-3 border rounded flex items-center justify-between"><div><div class="font-medium text-gray-900">${r.label||('Route '+(i+1))}</div><div class="text-sm text-gray-600">${r.from} → ${r.to} • ${r.km?.toFixed? r.km.toFixed(1):r.km} km • ${r.mins} min</div></div><button data-i="${i}" class="px-3 py-1 bg-red-600 text-white rounded text-sm rmRoute">Remove</button></div>`).join('') : '<div class="text-gray-500">No saved routes.</div>';
             list.querySelectorAll('.rmRoute').forEach(btn=>{ btn.addEventListener('click', () => { const idx = +btn.getAttribute('data-i'); const u2 = getAuth(); if (!u2) return; u2.savedRoutes.splice(idx,1); setAuth(u2); renderSavedRoutes(); }); });
+            // Append Subscribe/Unsubscribe toggle per saved route
+            try {
+                const uCur = getAuth(); const subs = (uCur && Array.isArray(uCur.subscriptions)) ? uCur.subscriptions : [];
+                const rows = list.querySelectorAll('.p-3.border.rounded');
+                rows.forEach((row, idx) => {
+                    const item = items[idx]; if (!item) return;
+                    const label = item.label || `${item.from} → ${item.to}`;
+                    const isSub = subs.includes(label);
+                    const btn = document.createElement('button');
+                    btn.className = 'ml-2 px-3 py-1 rounded text-sm ' + (isSub ? 'bg-yellow-500 text-black' : 'bg-blue-600 text-white');
+                    btn.textContent = isSub ? 'Unsubscribe' : 'Subscribe';
+                    btn.addEventListener('click', () => {
+                        const u3 = getAuth(); if (!u3) { showToast('Please log in', 'error'); return; }
+                        u3.subscriptions = Array.isArray(u3.subscriptions) ? u3.subscriptions : [];
+                        const pos = u3.subscriptions.indexOf(label);
+                        if (pos >= 0) { u3.subscriptions.splice(pos,1); showToast('Unsubscribed'); }
+                        else { u3.subscriptions.unshift(label); showToast('Subscribed'); }
+                        setAuth(u3); renderSavedRoutes();
+                    });
+                    const right = row.querySelector('button.rmRoute');
+                    if (right && right.parentElement) right.parentElement.appendChild(btn);
+                });
+            } catch {}
         }
         function initProfile() {
             const user = getAuth();
@@ -2232,6 +2268,8 @@
             if (saveP) saveP.onclick = () => { const u = getAuth()||{}; u.name = document.getElementById('authDisplayName').value; setAuth(u); showToast('Profile saved'); initProfile(); };
             if (savePrefs) savePrefs.onclick = () => { const u = getAuth()||{}; u.prefs = { alerts: document.getElementById('prefAlerts').checked, reports: document.getElementById('prefReports').checked, tips: document.getElementById('prefTips').checked }; setAuth(u); showToast('Preferences saved'); };
             if (clearSaved) clearSaved.onclick = () => { const u = getAuth()||{}; u.savedRoutes = []; setAuth(u); renderSavedRoutes(); showToast('Saved routes cleared'); };
+            const enablePush = document.getElementById('enablePushBtn');
+            if (enablePush) enablePush.onclick = async () => { try { await registerPush(); showToast('Push enabled'); } catch { showToast('Push not enabled', 'error'); } };
             renderSavedRoutes();
         }
 
@@ -2250,6 +2288,44 @@
             return header.join(',')+'\n'+rows.join('\n');
         }
         function downloadFile(filename, blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000); }
+        
+        // ===== Alerts & Notifications =====
+        function getSubscriptions() { const u = getAuth(); return (u && Array.isArray(u.subscriptions)) ? u.subscriptions : []; }
+        function setSubscriptions(list) { const u = getAuth()||{}; u.subscriptions = list; setAuth(u); }
+        function isSubscribed(label) { return getSubscriptions().includes(label); }
+        function subscribe(label) { const s = getSubscriptions(); if (!s.includes(label)) { s.unshift(label); setSubscriptions(s); } }
+        function unsubscribe(label) { const s = getSubscriptions().filter(x => x !== label); setSubscriptions(s); }
+        function notifyInApp(title, message) { try { iziToast.show({ title, message, position: 'topRight', timeout: 6000, color: 'blue' }); } catch {} }
+        async function notifyPush(title, message) {
+            try {
+                if (Notification.permission === 'granted' && navigator.serviceWorker?.ready) {
+                    const reg = await navigator.serviceWorker.ready;
+                    reg.showNotification(title, { body: message, icon: 'images/logo1.png', badge: 'images/logo1.png' });
+                }
+            } catch {}
+        }
+        async function registerPush() {
+            if (!('Notification' in window)) throw new Error('No Notification API');
+            if (Notification.permission !== 'granted') {
+                const perm = await Notification.requestPermission();
+                if (perm !== 'granted') throw new Error('Denied');
+            }
+            if ('serviceWorker' in navigator) { await navigator.serviceWorker.register('sw.js'); }
+        }
+        // Demo background simulator for alerts
+        (function alertSimulator(){
+            setInterval(() => {
+                const subs = getSubscriptions();
+                if (!subs.length) return;
+                if (Math.random() < 0.166) {
+                    const route = subs[Math.floor(Math.random()*subs.length)];
+                    const msgs = ['Heavy traffic ahead','Accident reported','Roadwork delay','Flooded street','Lane closure','Event congestion'];
+                    const msg = msgs[Math.floor(Math.random()*msgs.length)];
+                    notifyInApp(`Alert: ${route}`, msg);
+                    notifyPush(`Alert: ${route}`, msg);
+                }
+            }, 45000);
+        })();
         function initPrediction() {
             const typeSel = document.getElementById('predType');
             const routeWrap = document.getElementById('predRouteInputs');
